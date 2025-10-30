@@ -48,7 +48,7 @@ public class EmployeeManager {
         }
     }
 
-   
+    
     public static void main(String[] args) {
 
         if (args.length == 0) {
@@ -61,14 +61,14 @@ public class EmployeeManager {
 
         switch (command.charAt(0)) {
 
-            
+            case 'l':  // List
                 System.out.println(Constants.MSG_LOADING);
                 employees = readEmployeesFromFile();
                 employees.forEach(emp -> System.out.println(emp.trim()));
                 System.out.println(Constants.MSG_DATA_LOADED);
                 break;
 
-           
+            case 's': // Random
                 System.out.println(Constants.MSG_LOADING);
                 employees = readEmployeesFromFile();
                 if (!employees.isEmpty()) {
@@ -77,7 +77,7 @@ public class EmployeeManager {
                 System.out.println(Constants.MSG_DATA_LOADED);
                 break;
 
-           
+            case '+': // Add
                 System.out.println(Constants.MSG_LOADING);
                 employees = readEmployeesFromFile();
                 employees.add(command.substring(1));
@@ -85,31 +85,31 @@ public class EmployeeManager {
                 System.out.println(Constants.MSG_DATA_LOADED);
                 break;
 
-           
+            case '?': // Search
                 System.out.println(Constants.MSG_LOADING);
                 employees = readEmployeesFromFile();
                 System.out.println(employees.contains(command.substring(1)) ? Constants.MSG_EMP_FOUND : Constants.MSG_EMP_NOT_FOUND);
                 System.out.println(Constants.MSG_DATA_LOADED);
                 break;
 
-            
+            case 'c': // Count
                 System.out.println(Constants.MSG_LOADING);
                 employees = readEmployeesFromFile();
                 System.out.println("Total Employees: " + employees.size());
                 System.out.println(Constants.MSG_DATA_LOADED);
                 break;
 
-            
+            case 'u': // Update
                 System.out.println(Constants.MSG_LOADING);
                 employees = readEmployeesFromFile();
                 String target = command.substring(1);
-                boolean updated = employees.replaceAll(emp -> emp.equals(target) ? "Updated" : emp).contains("Updated");
+                employees.replaceAll(emp -> emp.equals(target) ? "Updated" : emp);
+                System.out.println(employees.contains("Updated") ? Constants.MSG_UPDATED : Constants.MSG_NOT_UPDATED);
                 writeEmployeesToFile(employees);
-                System.out.println(updated ? Constants.MSG_UPDATED : Constants.MSG_NOT_UPDATED);
                 System.out.println(Constants.MSG_DATA_LOADED);
                 break;
 
-            
+            default:
                 System.out.println(Constants.MSG_INVALID_CMD);
                 break;
         }
