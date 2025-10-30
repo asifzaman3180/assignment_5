@@ -3,7 +3,7 @@ import java.util.*;
 
 public class EmployeeManager {
 
-   
+    
     static class Constants {
         public static final String FILE_PATH = "employees.txt";
 
@@ -27,7 +27,7 @@ public class EmployeeManager {
         public static final String MSG_NO_ARGS = "Error: No arguments provided. Try l, s, +name, ?name, c, or u.";
     }
 
-   
+    
     private static List<String> readEmployeesFromFile() {
         try (BufferedReader reader = new BufferedReader(new FileReader(Constants.FILE_PATH))) {
             String line = reader.readLine();
