@@ -3,7 +3,7 @@ import java.util.*;
 
 public class EmployeeManager {
 
-    
+   
     static class Constants {
         public static final String FILE_PATH = "employees.txt";
 
@@ -27,7 +27,7 @@ public class EmployeeManager {
         public static final String MSG_NO_ARGS = "Error: No arguments provided. Try l, s, +name, ?name, c, or u.";
     }
 
-    
+   
     private static List<String> readEmployeesFromFile() {
         try (BufferedReader reader = new BufferedReader(new FileReader(Constants.FILE_PATH))) {
             String line = reader.readLine();
@@ -48,7 +48,7 @@ public class EmployeeManager {
         }
     }
 
-    
+   
     public static void main(String[] args) {
 
         if (args.length == 0) {
@@ -59,7 +59,14 @@ public class EmployeeManager {
         String command = args[0];
         List<String> employees;
 
-        switch (command.charAt(0)) {
+        // Validate first character of command
+        char cmd = command.charAt(0);
+        if ("ls+?cu".indexOf(cmd) == -1) {
+            System.out.println(Constants.MSG_INVALID_CMD);
+            return;
+        }
+
+        switch (cmd) {
 
             case 'l':  // List
                 System.out.println(Constants.MSG_LOADING);
@@ -78,6 +85,10 @@ public class EmployeeManager {
                 break;
 
             case '+': // Add
+                if (command.length() < 2) {
+                    System.out.println("Error: Employee name missing for add command.");
+                    break;
+                }
                 System.out.println(Constants.MSG_LOADING);
                 employees = readEmployeesFromFile();
                 employees.add(command.substring(1));
@@ -86,6 +97,10 @@ public class EmployeeManager {
                 break;
 
             case '?': // Search
+                if (command.length() < 2) {
+                    System.out.println("Error: Employee name missing for search command.");
+                    break;
+                }
                 System.out.println(Constants.MSG_LOADING);
                 employees = readEmployeesFromFile();
                 System.out.println(employees.contains(command.substring(1)) ? Constants.MSG_EMP_FOUND : Constants.MSG_EMP_NOT_FOUND);
@@ -100,6 +115,10 @@ public class EmployeeManager {
                 break;
 
             case 'u': // Update
+                if (command.length() < 2) {
+                    System.out.println("Error: Employee name missing for update command.");
+                    break;
+                }
                 System.out.println(Constants.MSG_LOADING);
                 employees = readEmployeesFromFile();
                 String target = command.substring(1);
@@ -110,6 +129,7 @@ public class EmployeeManager {
                 break;
 
             default:
+                // This case should never happen due to earlier validation
                 System.out.println(Constants.MSG_INVALID_CMD);
                 break;
         }
