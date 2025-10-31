@@ -6,7 +6,7 @@ public class EmployeeManager {
     
     // Reusable method to read employees from file
     private static String[] readEmployeesFromFile() throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("employees.txt")));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(Constants.EMPLOYEES_FILE_PATH)));
         String line = reader.readLine();
         reader.close();
         return line.split(",");
@@ -14,14 +14,14 @@ public class EmployeeManager {
     
     // Reusable method to write employees to file
     private static void writeEmployeesToFile(String[] employees) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter("employees.txt"));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEES_FILE_PATH));
         writer.write(String.join(",", employees));
         writer.close();
     }
     
     // Reusable method to append to employees file
     private static void appendToEmployeesFile(String content) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter("employees.txt", true));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEES_FILE_PATH, true));
         writer.write(content);
         writer.close();
     }
