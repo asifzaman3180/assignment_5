@@ -16,4 +16,10 @@ public class Constants {
     // Employee operations
     public static final String EMPLOYEE_FOUND_MESSAGE = "Employee found!";
     public static final String UPDATED_PLACEHOLDER = "Updated";
+    
+    // Error messages
+    public static final String INVALID_ARGUMENT_MESSAGE = "Error: Invalid or unsupported argument.";
+    public static final String MISSING_NAME_MESSAGE = "Error: Missing employee name for operation.";
+    public static final String USAGE_MESSAGE = "Usage: java EmployeeManager [l|s|+name|?name|c|uname|dname]";
+    public static final String FILE_ERROR_MESSAGE = "Error: Unable to access employee data file.";
 }
