@@ -97,7 +97,7 @@ public class EmployeeManager {
         try {
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(
-                            new FileInputStream("employees.txt")
+                            new FileInputStream(Constants.EMPLOYEE_FILE)
                     )
             );
             String line = reader.readLine();
@@ -113,7 +113,7 @@ public class EmployeeManager {
     private static void writeEmployees(List<String> employees) {
         try {
             BufferedWriter writer = new BufferedWriter(
-                    new FileWriter("employees.txt")
+                    new FileWriter(Constants.EMPLOYEE_FILE)
             );
             writer.write(String.join(",", employees));
             writer.close();
@@ -124,7 +124,7 @@ public class EmployeeManager {
     private static void appendEmployee(String employee) {
         try {
             BufferedWriter writer = new BufferedWriter(
-                    new FileWriter("employees.txt", true)
+                    new FileWriter(Constants.EMPLOYEE_FILE, true)
             );
             writer.write(", " + employee);
             writer.close();
