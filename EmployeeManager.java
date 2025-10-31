@@ -72,11 +72,18 @@ public class EmployeeManager {
         else if (command.contains("?")) {
             System.out.println(Constants.LOADING_MESSAGE);
             String searchName = command.substring(1);
+            boolean employeeFound = false;
+            
             for (String employee : readEmployeesFromFile()) {
                 if (employee.equals(searchName)) {
                     System.out.println(Constants.EMPLOYEE_FOUND_MESSAGE);
+                    employeeFound = true;
                     break;
                 }
+            }
+            
+            if (!employeeFound) {
+                System.out.println("Employee not found!");
             }
             System.out.println(Constants.DATA_LOADED_MESSAGE);
         } 
