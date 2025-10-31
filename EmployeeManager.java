@@ -102,7 +102,8 @@ public class EmployeeManager {
             case 'c':
                 System.out.println(LOADING_DATA);
                 List<String> empList = readEmployeesFromFile();
-                long wordCount = empList.stream().filter(emp -> !emp.trim().isEmpty()).count();
+                // Task 8: simplified count operation
+                long wordCount = empList.stream().filter(e -> !e.isBlank()).count();
                 int totalChars = empList.stream().mapToInt(String::length).sum();
                 System.out.println(wordCount + " word(s) found, total characters: " + totalChars);
                 System.out.println(DATA_LOADED);
