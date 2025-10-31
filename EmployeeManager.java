@@ -4,6 +4,13 @@ import java.util.*;
 
 public class EmployeeManager {
     public static void main(String[] args) {
+        
+        // Validate command line arguments
+        if (args.length != 1) {
+            System.out.println("Usage: java EmployeeManager [l|s|+name|?name|c|uname|dname]");
+            System.out.println("Please provide exactly one command line argument.");
+            return;
+        }
 
         // Check arguments
         if (args[0].equals("l")) {
