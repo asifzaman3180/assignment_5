@@ -6,8 +6,18 @@ public class EmployeeManager {
 
     public static void main(String[] args) {
 
+        // Task 2: Validate arguments
+        if (args.length == 0) {
+            System.out.println("Error: No arguments provided.");
+            System.out.println("Usage: java EmployeeManager <command>");
+            System.out.println("Commands: l, s, +<name>, ?<name>, c, u<name>, d<name>");
+            return; // exit safely
+        }
+
+        String command = args[0];
+
         // Check arguments
-        if (args[0].equals("l")) {
+        if (command.equals("l")) {
             System.out.println("Loading data ...");
             try {
                 BufferedReader reader = new BufferedReader(
@@ -22,11 +32,11 @@ public class EmployeeManager {
 
                 reader.close();
             } catch (Exception e) {
-                // Handle exception silently (no change in behavior)
+                // Handle exception silently
             }
             System.out.println("Data Loaded.");
 
-        } else if (args[0].equals("s")) {
+        } else if (command.equals("s")) {
             System.out.println("Loading data ...");
             try {
                 BufferedReader reader = new BufferedReader(
@@ -45,13 +55,17 @@ public class EmployeeManager {
             }
             System.out.println("Data Loaded.");
 
-        } else if (args[0].contains("+")) {
+        } else if (command.startsWith("+")) {
+            if (command.length() == 1) {
+                System.out.println("Error: No name provided to add.");
+                return;
+            }
             System.out.println("Loading data ...");
             try {
                 BufferedWriter writer = new BufferedWriter(
                         new FileWriter("employees.txt", true)
                 );
-                String name = args[0].substring(1);
+                String name = command.substring(1);
                 writer.write(", " + name);
                 writer.close();
             } catch (Exception e) {
@@ -59,7 +73,11 @@ public class EmployeeManager {
             }
             System.out.println("Data Loaded.");
 
-        } else if (args[0].contains("?")) {
+        } else if (command.startsWith("?")) {
+            if (command.length() == 1) {
+                System.out.println("Error: No name provided to search.");
+                return;
+            }
             System.out.println("Loading data ...");
             try {
                 BufferedReader reader = new BufferedReader(
@@ -69,7 +87,7 @@ public class EmployeeManager {
                 String[] employees = line.split(",");
 
                 boolean found = false;
-                String searchName = args[0].substring(1);
+                String searchName = command.substring(1);
 
                 for (int i = 0; i < employees.length && !found; i++) {
                     if (employees[i].equals(searchName)) {
@@ -84,7 +102,7 @@ public class EmployeeManager {
             }
             System.out.println("Data Loaded.");
 
-        } else if (args[0].contains("c")) {
+        } else if (command.equals("c")) {
             System.out.println("Loading data ...");
             try {
                 BufferedReader reader = new BufferedReader(
@@ -114,7 +132,11 @@ public class EmployeeManager {
             }
             System.out.println("Data Loaded.");
 
-        } else if (args[0].contains("u")) {
+        } else if (command.startsWith("u")) {
+            if (command.length() == 1) {
+                System.out.println("Error: No name provided to update.");
+                return;
+            }
             System.out.println("Loading data ...");
             try {
                 BufferedReader reader = new BufferedReader(
@@ -123,7 +145,7 @@ public class EmployeeManager {
                 String line = reader.readLine();
                 String[] employees = line.split(",");
 
-                String name = args[0].substring(1);
+                String name = command.substring(1);
                 for (int i = 0; i < employees.length; i++) {
                     if (employees[i].equals(name)) {
                         employees[i] = "Updated";
@@ -141,7 +163,11 @@ public class EmployeeManager {
             }
             System.out.println("Data Updated.");
 
-        } else if (args[0].contains("d")) {
+        } else if (command.startsWith("d")) {
+            if (command.length() == 1) {
+                System.out.println("Error: No name provided to delete.");
+                return;
+            }
             System.out.println("Loading data ...");
             try {
                 BufferedReader reader = new BufferedReader(
@@ -150,7 +176,7 @@ public class EmployeeManager {
                 String line = reader.readLine();
                 String[] employees = line.split(",");
 
-                String name = args[0].substring(1);
+                String name = command.substring(1);
                 List<String> list = new ArrayList<>(Arrays.asList(employees));
                 list.remove(name);
 
@@ -164,6 +190,9 @@ public class EmployeeManager {
                 // Ignore exception
             }
             System.out.println("Data Deleted.");
+        } else {
+            System.out.println("Error: Unsupported command '" + command + "'.");
+            System.out.println("Usage: l, s, +<name>, ?<name>, c, u<name>, d<name>");
         }
     }
 }
