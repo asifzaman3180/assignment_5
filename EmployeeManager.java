@@ -43,8 +43,14 @@ public class EmployeeManager {
                     System.out.println(employee);
                 }
             } 
-            catch (Exception exception) {
-
+            catch (FileNotFoundException e) {
+                System.out.println("Error: Employees file not found. Please ensure 'employees.txt' exists.");
+            }
+            catch (IOException e) {
+                System.out.println("Error: Unable to read employees file. Please check file permissions.");
+            }
+            catch (Exception e) {
+                System.out.println("Error: An unexpected error occurred while loading employee data.");
             }
             System.out.println("Data Loaded.");
         } 
@@ -52,27 +58,51 @@ public class EmployeeManager {
             System.out.println("Loading data ...");
             try {
                 String[] employees = readEmployeesFromFile();
+                if (employees.length == 0) {
+                    System.out.println("Error: No employees found in the file.");
+                    return;
+                }
                 System.out.println(String.join(",", employees));
                 System.out.println(employees[new Random().nextInt(employees.length)]);
             } 
-            catch (Exception exception) {
-
+            catch (FileNotFoundException e) {
+                System.out.println("Error: Employees file not found. Please ensure 'employees.txt' exists.");
+            }
+            catch (IOException e) {
+                System.out.println("Error: Unable to read employees file. Please check file permissions.");
+            }
+            catch (Exception e) {
+                System.out.println("Error: An unexpected error occurred while selecting random employee.");
             }
             System.out.println("Data Loaded.");
         } 
         else if (args[0].contains("+")) {
             System.out.println("Loading data ...");
             try {
+                if (args[0].length() == 1) {
+                    System.out.println("Error: Add command requires an employee name after '+'");
+                    return;
+                }
                 appendToEmployeesFile(", " + args[0].substring(1));
             } 
-            catch (Exception exception) {
-
+            catch (FileNotFoundException e) {
+                System.out.println("Error: Employees file not found. Please ensure 'employees.txt' exists.");
+            }
+            catch (IOException e) {
+                System.out.println("Error: Unable to write to employees file. Please check file permissions.");
+            }
+            catch (Exception e) {
+                System.out.println("Error: An unexpected error occurred while adding employee.");
             }
             System.out.println("Data Loaded.");
         } 
         else if (args[0].contains("?")) {
             System.out.println("Loading data ...");
             try {
+                if (args[0].length() == 1) {
+                    System.out.println("Error: Search command requires an employee name after '?'");
+                    return;
+                }
                 String[] employees = readEmployeesFromFile();
                 String searchName = args[0].substring(1);
                 boolean employeeFound = false;
@@ -90,8 +120,14 @@ public class EmployeeManager {
                     System.out.println("Employee not found!");
                 }
             } 
-            catch (Exception exception) {
-
+            catch (FileNotFoundException e) {
+                System.out.println("Error: Employees file not found. Please ensure 'employees.txt' exists.");
+            }
+            catch (IOException e) {
+                System.out.println("Error: Unable to read employees file. Please check file permissions.");
+            }
+            catch (Exception e) {
+                System.out.println("Error: An unexpected error occurred while searching for employee.");
             }
             System.out.println("Data Loaded.");
         } 
@@ -99,44 +135,93 @@ public class EmployeeManager {
             System.out.println("Loading data ...");
             try {
                 String[] employees = readEmployeesFromFile();
+                if (employees.length == 0) {
+                    System.out.println("Error: No employees found in the file.");
+                    return;
+                }
                 int employeeCount = employees.length;
                 int totalCharacters = String.join(",", employees).length();
                 System.out.println(employeeCount + " employee(s) found with " + totalCharacters + " characters");
             } 
-            catch (Exception exception) {
-
+            catch (FileNotFoundException e) {
+                System.out.println("Error: Employees file not found. Please ensure 'employees.txt' exists.");
+            }
+            catch (IOException e) {
+                System.out.println("Error: Unable to read employees file. Please check file permissions.");
+            }
+            catch (Exception e) {
+                System.out.println("Error: An unexpected error occurred while counting employees.");
             }
             System.out.println("Data Loaded.");
         } 
         else if (args[0].contains("u")) {
             System.out.println("Loading data ...");
             try {
+                if (args[0].length() == 1) {
+                    System.out.println("Error: Update command requires an employee name after 'u'");
+                    return;
+                }
                 String[] employees = readEmployeesFromFile();
                 String employeeNameToUpdate = args[0].substring(1);
+                boolean employeeFound = false;
+                
                 for (int index = 0; index < employees.length; index++) {
                     if (employees[index].equals(employeeNameToUpdate)) {
                         employees[index] = "Updated";
+                        employeeFound = true;
                     }
                 }
+                
+                if (!employeeFound) {
+                    System.out.println("Error: Employee '" + employeeNameToUpdate + "' not found for update.");
+                    return;
+                }
+                
                 writeEmployeesToFile(employees);
             } 
-            catch (Exception exception) {
-
+            catch (FileNotFoundException e) {
+                System.out.println("Error: Employees file not found. Please ensure 'employees.txt' exists.");
+            }
+            catch (IOException e) {
+                System.out.println("Error: Unable to update employees file. Please check file permissions.");
+            }
+            catch (Exception e) {
+                System.out.println("Error: An unexpected error occurred while updating employee.");
             }
             System.out.println("Data Updated.");
         } 
         else if (args[0].contains("d")) {
             System.out.println("Loading data ...");
             try {
+                if (args[0].length() == 1) {
+                    System.out.println("Error: Delete command requires an employee name after 'd'");
+                    return;
+                }
                 String[] employees = readEmployeesFromFile();
+                String employeeNameToDelete = args[0].substring(1);
                 List<String> employeeList = new ArrayList<>(Arrays.asList(employees));
-                employeeList.remove(args[0].substring(1));
+                
+                if (!employeeList.remove(employeeNameToDelete)) {
+                    System.out.println("Error: Employee '" + employeeNameToDelete + "' not found for deletion.");
+                    return;
+                }
+                
                 writeEmployeesToFile(employeeList.toArray(new String[0]));
             } 
-            catch (Exception exception) {
-                
+            catch (FileNotFoundException e) {
+                System.out.println("Error: Employees file not found. Please ensure 'employees.txt' exists.");
+            }
+            catch (IOException e) {
+                System.out.println("Error: Unable to delete from employees file. Please check file permissions.");
+            }
+            catch (Exception e) {
+                System.out.println("Error: An unexpected error occurred while deleting employee.");
             }
             System.out.println("Data Deleted.");
+        }
+        else {
+            System.out.println("Error: Unsupported command '" + args[0] + "'");
+            System.out.println("Supported commands: l (list), s (show random), +name (add), ?name (search), c (count), uname (update), dname (delete)");
         }
     }
 }
