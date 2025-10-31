@@ -48,49 +48,43 @@ public class EmployeeManager {
             return;
         }
 
-        // Check arguments
-        if (args[0].equals("l")) {
+        String command = args[0];
+        
+        if (command.equals("l")) {
             System.out.println(Constants.LOADING_MESSAGE);
-            String[] employees = readEmployeesFromFile();
-            for (String employee : employees) {
+            for (String employee : readEmployeesFromFile()) {
                 System.out.println(employee);
             }
             System.out.println(Constants.DATA_LOADED_MESSAGE);
         } 
-        else if (args[0].equals("s")) {
+        else if (command.equals("s")) {
             System.out.println(Constants.LOADING_MESSAGE);
             String[] employees = readEmployeesFromFile();
             System.out.println(String.join(",", employees));
-            Random random = new Random();
-            int randomIndex = random.nextInt(employees.length);
-            System.out.println(employees[randomIndex]);
+            System.out.println(employees[new Random().nextInt(employees.length)]);
             System.out.println(Constants.DATA_LOADED_MESSAGE);
         } 
-        else if (args[0].contains("+")) {
+        else if (command.contains("+")) {
             System.out.println(Constants.LOADING_MESSAGE);
-            String newEmployee = args[0].substring(1);
-            appendEmployeeToFile(newEmployee);
+            appendEmployeeToFile(command.substring(1));
             System.out.println(Constants.DATA_LOADED_MESSAGE);
         } 
-        else if (args[0].contains("?")) {
+        else if (command.contains("?")) {
             System.out.println(Constants.LOADING_MESSAGE);
-            String[] employees = readEmployeesFromFile();
-            boolean found = false;
-            String searchName = args[0].substring(1);
-            for (int i = 0; i < employees.length && !found; i++) {
-                if (employees[i].equals(searchName)) {
+            String searchName = command.substring(1);
+            for (String employee : readEmployeesFromFile()) {
+                if (employee.equals(searchName)) {
                     System.out.println(Constants.EMPLOYEE_FOUND_MESSAGE);
-                    found = true;
+                    break;
                 }
             }
             System.out.println(Constants.DATA_LOADED_MESSAGE);
         } 
-        else if (args[0].contains("c")) {
+        else if (command.contains("c")) {
             System.out.println(Constants.LOADING_MESSAGE);
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(Constants.EMPLOYEES_FILE_PATH)));
-                String line = reader.readLine();
-                char[] characters = line.toCharArray();
+                char[] characters = reader.readLine().toCharArray();
                 boolean inWord = false;
                 int wordCount = 0;
                 for (char character : characters) {
@@ -109,10 +103,10 @@ public class EmployeeManager {
             }
             System.out.println(Constants.DATA_LOADED_MESSAGE);
         } 
-        else if (args[0].contains("u")) {
+        else if (command.contains("u")) {
             System.out.println(Constants.LOADING_MESSAGE);
             String[] employees = readEmployeesFromFile();
-            String employeeName = args[0].substring(1);
+            String employeeName = command.substring(1);
             for (int i = 0; i < employees.length; i++) {
                 if (employees[i].equals(employeeName)) {
                     employees[i] = Constants.UPDATED_PLACEHOLDER;
@@ -121,12 +115,10 @@ public class EmployeeManager {
             writeEmployeesToFile(employees);
             System.out.println(Constants.DATA_UPDATED_MESSAGE);
         } 
-        else if (args[0].contains("d")) {
+        else if (command.contains("d")) {
             System.out.println(Constants.LOADING_MESSAGE);
-            String[] employees = readEmployeesFromFile();
-            String employeeToDelete = args[0].substring(1);
-            List<String> employeeList = new ArrayList<>(Arrays.asList(employees));
-            employeeList.remove(employeeToDelete);
+            List<String> employeeList = new ArrayList<>(Arrays.asList(readEmployeesFromFile()));
+            employeeList.remove(command.substring(1));
             writeEmployeesToFile(employeeList.toArray(new String[0]));
             System.out.println(Constants.DATA_DELETED_MESSAGE);
         }
