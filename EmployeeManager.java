@@ -1,10 +1,17 @@
-// File Name EmployeeManager.java
+
+//File Name EmployeeManager.java
 import java.io.*;
 import java.util.*;
 
 public class EmployeeManager {
     public static void main(String[] args) {
-        // Check arguments
+        if (args.length != 1) {
+            System.out.println("Error: Please provide exactly one argument.");
+            System.out.println("Usage: java EmployeeManager <command>");
+            System.out.println("Commands: l, s, +<name>, ?<name>, c, u<name>, d<name>");
+            return;
+        }
+
         if (args[0].equals("l")) {
             System.out.println("Loading data ...");
             try {
