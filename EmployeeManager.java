@@ -91,20 +91,10 @@ public class EmployeeManager {
             System.out.println(Constants.LOADING_MESSAGE);
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(Constants.EMPLOYEES_FILE_PATH)));
-                char[] characters = reader.readLine().toCharArray();
-                boolean inWord = false;
-                int wordCount = 0;
-                for (char character : characters) {
-                    if (character == ' ') {
-                        if (!inWord) {
-                            wordCount++;
-                            inWord = true;
-                        } else {
-                            inWord = false;
-                        }
-                    }
-                }
-                System.out.println(wordCount + " word(s) found " + characters.length);
+                String line = reader.readLine();
+                String[] employees = line.split(",");
+                int characterCount = line.length();
+                System.out.println(employees.length + " employee(s) found, " + characterCount + " character(s)");
             } 
             catch (Exception exception) {
             }
