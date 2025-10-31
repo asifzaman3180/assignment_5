@@ -95,6 +95,8 @@ public class EmployeeManager {
                 System.out.println(LOADING_DATA);
                 if (readEmployeesFromFile().contains(command.substring(1))) {
                     System.out.println(EMPLOYEE_FOUND);
+                } else {
+                    System.out.println("Employee not found!");
                 }
                 System.out.println(DATA_LOADED);
                 break;
@@ -102,7 +104,6 @@ public class EmployeeManager {
             case 'c':
                 System.out.println(LOADING_DATA);
                 List<String> empList = readEmployeesFromFile();
-                // Task 8: simplified count operation
                 long wordCount = empList.stream().filter(e -> !e.isBlank()).count();
                 int totalChars = empList.stream().mapToInt(String::length).sum();
                 System.out.println(wordCount + " word(s) found, total characters: " + totalChars);
@@ -117,9 +118,13 @@ public class EmployeeManager {
                 System.out.println(LOADING_DATA);
                 List<String> empUpdateList = readEmployeesFromFile();
                 String empToUpdate = command.substring(1);
-                empUpdateList.replaceAll(e -> e.equals(empToUpdate) ? "Updated" : e);
-                writeEmployeesToFile(empUpdateList);
-                System.out.println(DATA_UPDATED);
+                if (!empUpdateList.contains(empToUpdate)) {
+                    System.out.println("Employee not found to update!");
+                } else {
+                    empUpdateList.replaceAll(e -> e.equals(empToUpdate) ? "Updated" : e);
+                    writeEmployeesToFile(empUpdateList);
+                    System.out.println(DATA_UPDATED);
+                }
                 break;
 
             case 'd':
@@ -129,9 +134,14 @@ public class EmployeeManager {
                 }
                 System.out.println(LOADING_DATA);
                 List<String> empDeleteList = readEmployeesFromFile();
-                empDeleteList.remove(command.substring(1));
-                writeEmployeesToFile(empDeleteList);
-                System.out.println(DATA_DELETED);
+                String empToDelete = command.substring(1);
+                if (!empDeleteList.contains(empToDelete)) {
+                    System.out.println("Employee not found to delete!");
+                } else {
+                    empDeleteList.remove(empToDelete);
+                    writeEmployeesToFile(empDeleteList);
+                    System.out.println(DATA_DELETED);
+                }
                 break;
 
             default:
