@@ -21,29 +21,28 @@ public class EmployeeManager {
     private static final String EMPLOYEE_FOUND = "Employee found!";
     // ---------------------------------------------------
 
-    private static List<String> readEmployeesFromFile(String filePath) {
-        List<String> employees = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+    private static List<String> readEmployeesFromFile() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(EMPLOYEE_FILE))) {
             String line = reader.readLine();
             if (line != null && !line.isEmpty()) {
-                employees = new ArrayList<>(Arrays.asList(line.split(",")));
+                return new ArrayList<>(Arrays.asList(line.split(",")));
             }
         } catch (IOException e) {
             // Handle silently
         }
-        return employees;
+        return new ArrayList<>();
     }
 
-    private static void writeEmployeesToFile(String filePath, List<String> employees) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+    private static void writeEmployeesToFile(List<String> employees) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(EMPLOYEE_FILE))) {
             writer.write(String.join(",", employees));
         } catch (IOException e) {
             // Handle silently
         }
     }
 
-    private static void appendEmployeeToFile(String filePath, String employeeName) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
+    private static void appendEmployeeToFile(String employeeName) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(EMPLOYEE_FILE, true))) {
             writer.write(", " + employeeName);
         } catch (IOException e) {
             // Handle silently
@@ -60,98 +59,83 @@ public class EmployeeManager {
         }
 
         String command = args[0];
-        String filePath = EMPLOYEE_FILE;
 
-        if (command.equals("l")) {
-            System.out.println(LOADING_DATA);
-            List<String> employeeList = readEmployeesFromFile(filePath);
-            for (String employee : employeeList) {
-                System.out.println(employee);
-            }
-            System.out.println(DATA_LOADED);
+        switch (command.charAt(0)) {
 
-        } else if (command.equals("s")) {
-            System.out.println(LOADING_DATA);
-            List<String> employeeList = readEmployeesFromFile(filePath);
-            if (!employeeList.isEmpty()) {
-                Random random = new Random();
-                int randomIndex = random.nextInt(employeeList.size());
-                System.out.println(employeeList.get(randomIndex));
-            }
-            System.out.println(DATA_LOADED);
+            case 'l':
+                System.out.println(LOADING_DATA);
+                readEmployeesFromFile().forEach(System.out::println);
+                System.out.println(DATA_LOADED);
+                break;
 
-        } else if (command.startsWith("+")) {
-            if (command.length() == 1) {
-                System.out.println(NO_NAME_ADD);
-                return;
-            }
-            System.out.println(LOADING_DATA);
-            String newEmployee = command.substring(1);
-            appendEmployeeToFile(filePath, newEmployee);
-            System.out.println(DATA_LOADED);
-
-        } else if (command.startsWith("?")) {
-            if (command.length() == 1) {
-                System.out.println(NO_NAME_SEARCH);
-                return;
-            }
-            System.out.println(LOADING_DATA);
-            List<String> employeeList = readEmployeesFromFile(filePath);
-            String searchEmployee = command.substring(1);
-            if (employeeList.contains(searchEmployee)) {
-                System.out.println(EMPLOYEE_FOUND);
-            }
-            System.out.println(DATA_LOADED);
-
-        } else if (command.equals("c")) {
-            System.out.println(LOADING_DATA);
-            List<String> employeeList = readEmployeesFromFile(filePath);
-            int totalChars = 0;
-            int wordCount = 0;
-
-            for (String emp : employeeList) {
-                totalChars += emp.length();
-                if (!emp.trim().isEmpty()) {
-                    wordCount++;
+            case 's':
+                System.out.println(LOADING_DATA);
+                List<String> employees = readEmployeesFromFile();
+                if (!employees.isEmpty()) {
+                    System.out.println(employees.get(new Random().nextInt(employees.size())));
                 }
-            }
+                System.out.println(DATA_LOADED);
+                break;
 
-            System.out.println(wordCount + " word(s) found, total characters: " + totalChars);
-            System.out.println(DATA_LOADED);
-
-        } else if (command.startsWith("u")) {
-            if (command.length() == 1) {
-                System.out.println(NO_NAME_UPDATE);
-                return;
-            }
-            System.out.println(LOADING_DATA);
-            List<String> employeeList = readEmployeesFromFile(filePath);
-            String employeeToUpdate = command.substring(1);
-
-            for (int i = 0; i < employeeList.size(); i++) {
-                if (employeeList.get(i).equals(employeeToUpdate)) {
-                    employeeList.set(i, "Updated");
+            case '+':
+                if (command.length() == 1) {
+                    System.out.println(NO_NAME_ADD);
+                    return;
                 }
-            }
+                System.out.println(LOADING_DATA);
+                appendEmployeeToFile(command.substring(1));
+                System.out.println(DATA_LOADED);
+                break;
 
-            writeEmployeesToFile(filePath, employeeList);
-            System.out.println(DATA_UPDATED);
+            case '?':
+                if (command.length() == 1) {
+                    System.out.println(NO_NAME_SEARCH);
+                    return;
+                }
+                System.out.println(LOADING_DATA);
+                if (readEmployeesFromFile().contains(command.substring(1))) {
+                    System.out.println(EMPLOYEE_FOUND);
+                }
+                System.out.println(DATA_LOADED);
+                break;
 
-        } else if (command.startsWith("d")) {
-            if (command.length() == 1) {
-                System.out.println(NO_NAME_DELETE);
-                return;
-            }
-            System.out.println(LOADING_DATA);
-            List<String> employeeList = readEmployeesFromFile(filePath);
-            String employeeToDelete = command.substring(1);
-            employeeList.remove(employeeToDelete);
-            writeEmployeesToFile(filePath, employeeList);
-            System.out.println(DATA_DELETED);
+            case 'c':
+                System.out.println(LOADING_DATA);
+                List<String> empList = readEmployeesFromFile();
+                long wordCount = empList.stream().filter(emp -> !emp.trim().isEmpty()).count();
+                int totalChars = empList.stream().mapToInt(String::length).sum();
+                System.out.println(wordCount + " word(s) found, total characters: " + totalChars);
+                System.out.println(DATA_LOADED);
+                break;
 
-        } else {
-            System.out.println(String.format(UNSUPPORTED_COMMAND, command));
-            System.out.println(USAGE);
+            case 'u':
+                if (command.length() == 1) {
+                    System.out.println(NO_NAME_UPDATE);
+                    return;
+                }
+                System.out.println(LOADING_DATA);
+                List<String> empUpdateList = readEmployeesFromFile();
+                String empToUpdate = command.substring(1);
+                empUpdateList.replaceAll(e -> e.equals(empToUpdate) ? "Updated" : e);
+                writeEmployeesToFile(empUpdateList);
+                System.out.println(DATA_UPDATED);
+                break;
+
+            case 'd':
+                if (command.length() == 1) {
+                    System.out.println(NO_NAME_DELETE);
+                    return;
+                }
+                System.out.println(LOADING_DATA);
+                List<String> empDeleteList = readEmployeesFromFile();
+                empDeleteList.remove(command.substring(1));
+                writeEmployeesToFile(empDeleteList);
+                System.out.println(DATA_DELETED);
+                break;
+
+            default:
+                System.out.println(String.format(UNSUPPORTED_COMMAND, command));
+                System.out.println(USAGE);
         }
     }
 }
