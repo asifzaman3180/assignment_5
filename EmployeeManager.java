@@ -39,8 +39,7 @@ public class EmployeeManager {
         if (args[0].equals("l")) {
             System.out.println("Loading data ...");
             try {
-                String[] employees = readEmployeesFromFile();
-                for (String employee : employees) {
+                for (String employee : readEmployeesFromFile()) {
                     System.out.println(employee);
                 }
             } 
@@ -54,9 +53,7 @@ public class EmployeeManager {
             try {
                 String[] employees = readEmployeesFromFile();
                 System.out.println(String.join(",", employees));
-                Random random = new Random();
-                int randomIndex = random.nextInt(employees.length);
-                System.out.println(employees[randomIndex]);
+                System.out.println(employees[new Random().nextInt(employees.length)]);
             } 
             catch (Exception exception) {
 
@@ -66,8 +63,7 @@ public class EmployeeManager {
         else if (args[0].contains("+")) {
             System.out.println("Loading data ...");
             try {
-                String newEmployeeName = args[0].substring(1);
-                appendToEmployeesFile(", " + newEmployeeName);
+                appendToEmployeesFile(", " + args[0].substring(1));
             } 
             catch (Exception exception) {
 
@@ -78,12 +74,11 @@ public class EmployeeManager {
             System.out.println("Loading data ...");
             try {
                 String[] employees = readEmployeesFromFile();
-                boolean employeeFound = false;
                 String searchName = args[0].substring(1);
-                for (int index = 0; index < employees.length && !employeeFound; index++) {
+                for (int index = 0; index < employees.length; index++) {
                     if (employees[index].equals(searchName)) {
                         System.out.println("Employee found!");
-                        employeeFound = true;
+                        break;
                     }
                 }
             } 
@@ -95,9 +90,7 @@ public class EmployeeManager {
         else if (args[0].contains("c")) {
             System.out.println("Loading data ...");
             try {
-                String[] employees = readEmployeesFromFile();
-                String line = String.join(",", employees);
-                char[] characterArray = line.toCharArray();
+                char[] characterArray = String.join(",", readEmployeesFromFile()).toCharArray();
                 boolean inWord = false;
                 int wordCount = 0;
                 for (char character : characterArray) {
@@ -138,9 +131,8 @@ public class EmployeeManager {
             System.out.println("Loading data ...");
             try {
                 String[] employees = readEmployeesFromFile();
-                String employeeNameToDelete = args[0].substring(1);
                 List<String> employeeList = new ArrayList<>(Arrays.asList(employees));
-                employeeList.remove(employeeNameToDelete);
+                employeeList.remove(args[0].substring(1));
                 writeEmployeesToFile(employeeList.toArray(new String[0]));
             } 
             catch (Exception exception) {
