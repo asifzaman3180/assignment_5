@@ -1,0 +1,3 @@
+*.txt
+*.log
+!important.log
