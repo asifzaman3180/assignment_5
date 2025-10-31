@@ -1,0 +1,6 @@
+# Ignore all .txt files
+*.txt
+
+# Ignore all .log files but exclude important.log
+*.log
+!important.log
