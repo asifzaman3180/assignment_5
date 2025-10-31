@@ -75,11 +75,19 @@ public class EmployeeManager {
             try {
                 String[] employees = readEmployeesFromFile();
                 String searchName = args[0].substring(1);
+                boolean employeeFound = false;
+                
                 for (int index = 0; index < employees.length; index++) {
                     if (employees[index].equals(searchName)) {
-                        System.out.println("Employee found!");
+                        employeeFound = true;
                         break;
                     }
+                }
+                
+                if (employeeFound) {
+                    System.out.println("Employee found!");
+                } else {
+                    System.out.println("Employee not found!");
                 }
             } 
             catch (Exception exception) {
