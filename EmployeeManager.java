@@ -4,6 +4,14 @@ import java.util.*;
 
 public class EmployeeManager {
     public static void main(String[] args) {
+        // Add validation check for command-line arguments
+        if (args.length != 1) {
+            System.out.println("Error: Incorrect number of arguments.");
+            System.out.println("Usage: java EmployeeManager <command>");
+            System.out.println("Commands: l (list), s (show random), +name (add), ?name (search), c (count), uname (update), dname (delete)");
+            return;
+        }
+        
         // Check arguments
         if (args[0].equals("l")) {
             System.out.println("Loading data ...");
