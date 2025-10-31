@@ -2,32 +2,33 @@
 import java.io.*;
 import java.util.*;
 
+// Main application class for managing employee data which provides functionality to list, search, add, update, delete, and count employees
 public class EmployeeManager {
     
-    // Reusable method to read employees from file
-    private static String[] readEmployeesFromFile() throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(Constants.EMPLOYEES_FILE_PATH)));
-        String line = reader.readLine();
-        reader.close();
-        return line.split(",");
+    // Reads all employees from the data file and returns as an array
+    private static String[] readAllEmployees() throws IOException {
+        BufferedReader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(Constants.EMPLOYEES_FILE_PATH)));
+        String fileContent = fileReader.readLine();
+        fileReader.close();
+        return fileContent.split(",");
     }
     
-    // Reusable method to write employees to file
-    private static void writeEmployeesToFile(String[] employees) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEES_FILE_PATH));
-        writer.write(String.join(",", employees));
-        writer.close();
+    // Writes the complete list of employees to the data file
+    private static void writeAllEmployees(String[] employees) throws IOException {
+        BufferedWriter fileWriter = new BufferedWriter(new FileWriter(Constants.EMPLOYEES_FILE_PATH));
+        fileWriter.write(String.join(",", employees));
+        fileWriter.close();
     }
     
-    // Reusable method to append to employees file
-    private static void appendToEmployeesFile(String content) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEES_FILE_PATH, true));
-        writer.write(content);
-        writer.close();
+    // Appends new content to the end of the employees file
+    private static void appendToEmployeeFile(String contentToAppend) throws IOException {
+        BufferedWriter fileWriter = new BufferedWriter(new FileWriter(Constants.EMPLOYEES_FILE_PATH, true));
+        fileWriter.write(contentToAppend);
+        fileWriter.close();
     }
 
     public static void main(String[] args) {
-        // Add validation check for command-line arguments
+        // Validate command line arguments
         if (args.length != 1) {
             System.out.println("Error: Incorrect number of arguments.");
             System.out.println("Usage: java EmployeeManager <command>");
@@ -35,12 +36,15 @@ public class EmployeeManager {
             return;
         }
         
-        // Check arguments
-        if (args[0].equals("l")) {
+        String userCommand = args[0];
+        
+        // Execute command based on user input
+        if (userCommand.equals("l")) {
+            // List all employees
             System.out.println("Loading data ...");
             try {
-                for (String employee : readEmployeesFromFile()) {
-                    System.out.println(employee);
+                for (String employeeName : readAllEmployees()) {
+                    System.out.println(employeeName);
                 }
             } 
             catch (FileNotFoundException e) {
@@ -54,16 +58,17 @@ public class EmployeeManager {
             }
             System.out.println("Data Loaded.");
         } 
-        else if (args[0].equals("s")) {
+        else if (userCommand.equals("s")) {
+            // Show a random employee
             System.out.println("Loading data ...");
             try {
-                String[] employees = readEmployeesFromFile();
-                if (employees.length == 0) {
+                String[] allEmployees = readAllEmployees();
+                if (allEmployees.length == 0) {
                     System.out.println("Error: No employees found in the file.");
                     return;
                 }
-                System.out.println(String.join(",", employees));
-                System.out.println(employees[new Random().nextInt(employees.length)]);
+                System.out.println(String.join(",", allEmployees));
+                System.out.println(allEmployees[new Random().nextInt(allEmployees.length)]);
             } 
             catch (FileNotFoundException e) {
                 System.out.println("Error: Employees file not found. Please ensure 'employees.txt' exists.");
@@ -76,14 +81,16 @@ public class EmployeeManager {
             }
             System.out.println("Data Loaded.");
         } 
-        else if (args[0].contains("+")) {
+        else if (userCommand.contains("+")) {
+            // Add a new employee
             System.out.println("Loading data ...");
             try {
-                if (args[0].length() == 1) {
+                if (userCommand.length() == 1) {
                     System.out.println("Error: Add command requires an employee name after '+'");
                     return;
                 }
-                appendToEmployeesFile(", " + args[0].substring(1));
+                String newEmployee = userCommand.substring(1);
+                appendToEmployeeFile(", " + newEmployee);
             } 
             catch (FileNotFoundException e) {
                 System.out.println("Error: Employees file not found. Please ensure 'employees.txt' exists.");
@@ -96,25 +103,28 @@ public class EmployeeManager {
             }
             System.out.println("Data Loaded.");
         } 
-        else if (args[0].contains("?")) {
+        else if (userCommand.contains("?")) {
+            // Search for an employee
             System.out.println("Loading data ...");
             try {
-                if (args[0].length() == 1) {
+                if (userCommand.length() == 1) {
                     System.out.println("Error: Search command requires an employee name after '?'");
                     return;
                 }
-                String[] employees = readEmployeesFromFile();
-                String searchName = args[0].substring(1);
-                boolean employeeFound = false;
+                String[] allEmployees = readAllEmployees();
+                String targetEmployee = userCommand.substring(1);
+                boolean isEmployeeFound = false;
                 
-                for (int index = 0; index < employees.length; index++) {
-                    if (employees[index].equals(searchName)) {
-                        employeeFound = true;
+                // Search through employee list
+                for (int currentIndex = 0; currentIndex < allEmployees.length; currentIndex++) {
+                    if (allEmployees[currentIndex].equals(targetEmployee)) {
+                        isEmployeeFound = true;
                         break;
                     }
                 }
                 
-                if (employeeFound) {
+                // Display search result
+                if (isEmployeeFound) {
                     System.out.println("Employee found!");
                 } else {
                     System.out.println("Employee not found!");
@@ -131,17 +141,18 @@ public class EmployeeManager {
             }
             System.out.println("Data Loaded.");
         } 
-        else if (args[0].contains("c")) {
+        else if (userCommand.contains("c")) {
+            // Count employees and characters
             System.out.println("Loading data ...");
             try {
-                String[] employees = readEmployeesFromFile();
-                if (employees.length == 0) {
+                String[] allEmployees = readAllEmployees();
+                if (allEmployees.length == 0) {
                     System.out.println("Error: No employees found in the file.");
                     return;
                 }
-                int employeeCount = employees.length;
-                int totalCharacters = String.join(",", employees).length();
-                System.out.println(employeeCount + " employee(s) found with " + totalCharacters + " characters");
+                int totalEmployees = allEmployees.length;
+                int totalCharacterCount = String.join(",", allEmployees).length();
+                System.out.println(totalEmployees + " employee(s) found with " + totalCharacterCount + " characters");
             } 
             catch (FileNotFoundException e) {
                 System.out.println("Error: Employees file not found. Please ensure 'employees.txt' exists.");
@@ -154,30 +165,33 @@ public class EmployeeManager {
             }
             System.out.println("Data Loaded.");
         } 
-        else if (args[0].contains("u")) {
+        else if (userCommand.contains("u")) {
+            // Update an existing employee
             System.out.println("Loading data ...");
             try {
-                if (args[0].length() == 1) {
+                if (userCommand.length() == 1) {
                     System.out.println("Error: Update command requires an employee name after 'u'");
                     return;
                 }
-                String[] employees = readEmployeesFromFile();
-                String employeeNameToUpdate = args[0].substring(1);
-                boolean employeeFound = false;
+                String[] allEmployees = readAllEmployees();
+                String employeeToUpdate = userCommand.substring(1);
+                boolean isUpdateSuccessful = false;
                 
-                for (int index = 0; index < employees.length; index++) {
-                    if (employees[index].equals(employeeNameToUpdate)) {
-                        employees[index] = "Updated";
-                        employeeFound = true;
+                // Find and update the employee
+                for (int currentIndex = 0; currentIndex < allEmployees.length; currentIndex++) {
+                    if (allEmployees[currentIndex].equals(employeeToUpdate)) {
+                        allEmployees[currentIndex] = "Updated";
+                        isUpdateSuccessful = true;
                     }
                 }
                 
-                if (!employeeFound) {
-                    System.out.println("Error: Employee '" + employeeNameToUpdate + "' not found for update.");
+                // Check if employee was found and updated
+                if (!isUpdateSuccessful) {
+                    System.out.println("Error: Employee '" + employeeToUpdate + "' not found for update.");
                     return;
                 }
                 
-                writeEmployeesToFile(employees);
+                writeAllEmployees(allEmployees);
             } 
             catch (FileNotFoundException e) {
                 System.out.println("Error: Employees file not found. Please ensure 'employees.txt' exists.");
@@ -190,23 +204,25 @@ public class EmployeeManager {
             }
             System.out.println("Data Updated.");
         } 
-        else if (args[0].contains("d")) {
+        else if (userCommand.contains("d")) {
+            // Delete an employee
             System.out.println("Loading data ...");
             try {
-                if (args[0].length() == 1) {
+                if (userCommand.length() == 1) {
                     System.out.println("Error: Delete command requires an employee name after 'd'");
                     return;
                 }
-                String[] employees = readEmployeesFromFile();
-                String employeeNameToDelete = args[0].substring(1);
-                List<String> employeeList = new ArrayList<>(Arrays.asList(employees));
+                String[] allEmployees = readAllEmployees();
+                String employeeToDelete = userCommand.substring(1);
+                List<String> updatedEmployeeList = new ArrayList<>(Arrays.asList(allEmployees));
                 
-                if (!employeeList.remove(employeeNameToDelete)) {
-                    System.out.println("Error: Employee '" + employeeNameToDelete + "' not found for deletion.");
+                // Attempt to remove the employee
+                if (!updatedEmployeeList.remove(employeeToDelete)) {
+                    System.out.println("Error: Employee '" + employeeToDelete + "' not found for deletion.");
                     return;
                 }
                 
-                writeEmployeesToFile(employeeList.toArray(new String[0]));
+                writeAllEmployees(updatedEmployeeList.toArray(new String[0]));
             } 
             catch (FileNotFoundException e) {
                 System.out.println("Error: Employees file not found. Please ensure 'employees.txt' exists.");
@@ -220,7 +236,8 @@ public class EmployeeManager {
             System.out.println("Data Deleted.");
         }
         else {
-            System.out.println("Error: Unsupported command '" + args[0] + "'");
+            // Handle unsupported commands
+            System.out.println("Error: Unsupported command '" + userCommand + "'");
             System.out.println("Supported commands: l (list), s (show random), +name (add), ?name (search), c (count), uname (update), dname (delete)");
         }
     }
