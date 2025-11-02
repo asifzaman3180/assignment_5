@@ -1,4 +1,4 @@
-//File Name EmployeeManager.java
+// File Name EmployeeManager.java
 import java.io.*;
 import java.util.*;
 
@@ -10,13 +10,13 @@ public class EmployeeManager {
         if (args.length != 1) {
             System.out.println("Invalid number of arguments. Please provide exactly one argument.");
             System.out.println("Usage examples:");
-            System.out.println("  l   - List all employees");
-            System.out.println("  s   - Show a random employee");
-            System.out.println("  +<name> - Add a new employee");
-            System.out.println("  ?<name> - Search for an employee");
-            System.out.println("  u<name> - Update an employee");
-            System.out.println("  d<name> - Delete an employee");
-            System.out.println("  c   - Count words and characters");
+            System.out.println("  l        - List all employees");
+            System.out.println("  s        - Show a random employee");
+            System.out.println("  +<name>  - Add a new employee");
+            System.out.println("  ?<name>  - Search for an employee");
+            System.out.println("  u<name>  - Update an employee");
+            System.out.println("  d<name>  - Delete an employee");
+            System.out.println("  c        - Count words and characters");
             return; 
         }
 
@@ -38,7 +38,7 @@ public class EmployeeManager {
             System.out.println("Loading data ...");
             try {
                 List<String> employees = readEmployees();
-                System.out.println(String.join(",", employees));
+                System.out.println(String.join(", ", employees));
                 System.out.println(employees.get(new Random().nextInt(employees.size())));
             } catch (Exception ex) {}
             System.out.println("Data Loaded.");
@@ -71,24 +71,13 @@ public class EmployeeManager {
         } 
         
         // Count words and characters
-        else if (command.contains("c")) {
+        else if (command.equals("c")) {
             System.out.println("Loading data ...");
             try {
-                String employeeLine = String.join(",", readEmployees());
-                int wordCount = 0;
-                boolean inWord = false;
-
-                for (char c : employeeLine.toCharArray()) {
-                    if (c == ' ') {
-                        if (!inWord) {
-                            wordCount++;
-                            inWord = true;
-                        } else {
-                            inWord = false;
-                        }
-                    }
-                }
-                System.out.println(wordCount + " word(s) found " + employeeLine.length());
+                List<String> employees = readEmployees();
+                int wordCount = employees.size(); // Each employee is considered a "word"
+                int charCount = String.join(", ", employees).length(); // Total characters including commas and spaces
+                System.out.println(wordCount + " word(s) found " + charCount + " character(s)");
             } catch (Exception ex) {}
             System.out.println("Data Loaded.");
         } 
