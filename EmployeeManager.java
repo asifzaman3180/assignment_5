@@ -19,38 +19,38 @@ public class EmployeeManager
             System.exit(1);
         }
 
-        // ✅ Task 3: Improved variable naming
+        // ✅ Task 5: Use constants instead of literals
         String userOption = args[0];
-        String employeeFilePath = "employees.txt";
+        String employeeFilePath = Constants.EMPLOYEE_FILE_PATH;
 
         switch (userOption)
         {
-            case "l":
+            case Constants.OPTION_LIST:
                 listEmployees(employeeFilePath);
                 break;
 
-            case "s":
+            case Constants.OPTION_SEARCH:
                 searchEmployee(employeeFilePath);
                 break;
 
-            case "+":
+            case Constants.OPTION_ADD:
                 addEmployee(employeeFilePath);
                 break;
 
-            case "c":
+            case Constants.OPTION_COUNT:
                 countEmployees(employeeFilePath);
                 break;
 
-            case "u":
+            case Constants.OPTION_UPDATE:
                 updateEmployee(employeeFilePath);
                 break;
 
-            case "?":
+            case Constants.OPTION_HELP:
                 showHelp();
                 break;
 
             default:
-                System.out.println("Invalid option. Try: l, s, +, ?, c, u");
+                System.out.println(Constants.INVALID_OPTION_MESSAGE);
                 break;
         }
     }
@@ -169,15 +169,8 @@ public class EmployeeManager
     }
 
     // ============================================================
-    // 🗂️ 7. FILE OPERATIONS (Refactored in Task 4)
+    // 🗂️ 7. FILE OPERATIONS
     // ============================================================
-
-    /**
-     * Reads employee names from the given file.
-     *
-     * @param employeeFilePath path to the employee data file
-     * @return List of employee names
-     */
     private static List<String> readEmployeesFromFile(String employeeFilePath)
     {
         List<String> employeeList = new ArrayList<>();
@@ -202,12 +195,6 @@ public class EmployeeManager
         return employeeList;
     }
 
-    /**
-     * Writes the list of employee names to the given file.
-     *
-     * @param employeeFilePath path to the employee data file
-     * @param employeeList list of employee names
-     */
     private static void writeEmployeesToFile(String employeeFilePath, List<String> employeeList)
     {
         try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(employeeFilePath)))
