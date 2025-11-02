@@ -46,16 +46,21 @@ public class EmployeeManager {
             }
             System.out.println(Constants.DATA_LOADED_MSG);
         } 
-        else if (command.contains("c")) {
+        else if (command.equals("c")) {
             System.out.println(Constants.LOADING_MSG);
             String[] employees = readEmployees();
-            if (employees != null) { 
-                int wordCount = employees.length; 
-                int charCount = String.join(",", employees).length();
-                System.out.println(wordCount + " word(s) found, " + charCount + " characters");
-            }
-            System.out.println(Constants.DATA_LOADED_MSG); 
-        } 
+        if (employees != null) {
+            int wordCount = employees.length;
+            int charCount = Arrays.stream(employees)
+                              .mapToInt(String::length)
+                              .sum(); 
+        System.out.println(wordCount + " employee(s), " + charCount + " character(s)");
+    } else {
+        System.out.println("No employee data found.");
+    }
+        System.out.println(Constants.DATA_LOADED_MSG);
+}
+
         else if (command.startsWith("u")) {
             System.out.println(Constants.LOADING_MSG);
             String[] employees = readEmployees();
