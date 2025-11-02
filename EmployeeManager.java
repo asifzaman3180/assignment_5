@@ -37,9 +37,9 @@ public class EmployeeManager {
             System.out.println(Constants.LOADING_MSG);
             String[] employees = readEmployees();
             if (employees != null) {
-                for (String emp : employees) {
+                for (String emp : employees) { 
                     if (emp.equals(command.substring(1))) {
-                        System.out.println("Employee found!");
+                        System.out.println("Employee found!"); 
                         break;
                     }
                 }
@@ -49,12 +49,12 @@ public class EmployeeManager {
         else if (command.contains("c")) {
             System.out.println(Constants.LOADING_MSG);
             String[] employees = readEmployees();
-            if (employees != null) {
-                int wordCount = employees.length;
+            if (employees != null) { 
+                int wordCount = employees.length; 
                 int charCount = String.join(",", employees).length();
                 System.out.println(wordCount + " word(s) found, " + charCount + " characters");
             }
-            System.out.println(Constants.DATA_LOADED_MSG);
+            System.out.println(Constants.DATA_LOADED_MSG); 
         } 
         else if (command.startsWith("u")) {
             System.out.println(Constants.LOADING_MSG);
