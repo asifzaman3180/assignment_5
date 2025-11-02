@@ -6,6 +6,11 @@ public class EmployeeManager {
     public static void main(String[] args) {
 
         // Check arguments
+        if (args.length != 1) {
+            System.out.println("Error: Invalid number of arguments.");
+            return;
+        }
+        
         if (args[0].equals("l")) {
             System.out.println("Loading data ...");
             try {
