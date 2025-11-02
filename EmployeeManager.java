@@ -5,6 +5,12 @@ import java.util.*;
 public class EmployeeManager {
 
     public static void main(String[] args) {
+        if (args.length == 0) {
+            System.out.println("Error: No argument provided.");
+            System.out.println("Usage: java EmployeeManager [l|s|+name|?name|c|uname|dname]");
+            return;
+        }
+
         String command = args[0];
 
         if (command.equals("l")) {
@@ -42,12 +48,12 @@ public class EmployeeManager {
             }
             System.out.println("Data Loaded.");
         } 
-        else if (command.contains("c")) {
+        else if (command.equals("c")) {
             System.out.println("Loading data ...");
             String[] employeeList = readEmployees();
             if (employeeList != null) {
                 String allEmployees = String.join(" ", employeeList);
-                String[] words = allEmployees.trim().split("\\s+"); // split by spaces
+                String[] words = allEmployees.trim().split("\\s+");
                 int wordCount = (allEmployees.isEmpty()) ? 0 : words.length;
                 int charCount = allEmployees.length();
                 System.out.println(wordCount + " word(s) found, total characters: " + charCount);
@@ -77,6 +83,10 @@ public class EmployeeManager {
                 writeEmployees(employeeArrayList.toArray(new String[0]));
             }
             System.out.println("Data Deleted.");
+        } 
+        else {
+            System.out.println("Error: Unsupported argument '" + command + "'.");
+            System.out.println("Supported arguments: l, s, +name, ?name, c, uname, dname");
         }
     }
 
