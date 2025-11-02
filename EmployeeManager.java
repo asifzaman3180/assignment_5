@@ -5,9 +5,7 @@ public class EmployeeManager {
 
     public static void main(String[] args) {
 
-        // ------------------------------
         // Argument Validation
-        // ------------------------------
         if (args.length != 6) {
             System.out.println("Error: Invalid number of arguments!");
             System.out.println("Usage: java EmployeeManager l s + ? c u");
@@ -28,14 +26,10 @@ public class EmployeeManager {
             }
         }
 
-        // ------------------------------
         // Read employee list
-        // ------------------------------
         List<String> employeeList = readEmployees();
 
-        // ------------------------------
-        // Handle commands (Simplified Control Flow)
-        // ------------------------------
+        // Handle commands
         for (String command : args) {
 
             switch (command) {
@@ -49,30 +43,24 @@ public class EmployeeManager {
 
                 case "s" -> {  // Search employee
                     String searchQuery = "Alice Johnson";
-                    // Directly check using stream().anyMatch()
-                    if (employeeList.stream().anyMatch(emp -> emp.equalsIgnoreCase(searchQuery))) {
-                        System.out.println(searchQuery + " found.");
-                    } else {
-                        System.out.println(searchQuery + " not found.");
-                    }
+                    boolean found = employeeList.stream().anyMatch(emp -> emp.equalsIgnoreCase(searchQuery));
+                    System.out.println(found ? searchQuery + " found." : searchQuery + " not found.");
                 }
 
                 case "l" -> {  // List employees
                     System.out.println("Employee List: " + String.join(", ", employeeList));
                 }
 
-                // case "?" -> { ... }  // future operations
-                // case "c" -> { ... }
-                // case "u" -> { ... }
+                case "c" -> {  // Count employees (Task #8)
+                    System.out.println("Total employees: " + employeeList.size());
+                }
 
                 default -> System.out.println("Command " + command + " not handled.");
             }
         }
     }
 
-    // ------------------------------
     // File operations
-    // ------------------------------
     public static List<String> readEmployees() {
         List<String> employees = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(Constants.EMPLOYEE_FILE))) {
