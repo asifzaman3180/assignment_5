@@ -1,10 +1,24 @@
 // File Name: EmployeeManager.java
+// File Name: EmployeeManager.java
 import java.io.*;
 import java.util.*;
 
 public class EmployeeManager {
     public static void main(String[] args) {
         // Check arguments
+        if (args.length == 0) {
+            System.out.println("No arguments provided!");
+            System.out.println("Usage:");
+            System.out.println("  l  -> List employees");
+            System.out.println("  s  -> Show random employee");
+            System.out.println("  +X -> Add employee");
+            System.out.println("  ?X -> Search employee");
+            System.out.println("  c  -> Count words/chars");
+            System.out.println("  uX -> Update employee");
+            System.out.println("  dX -> Delete employee");
+            return; // Early termination for invalid args
+        }
+
         if (args[0].equals("l")) {
             System.out.println("Loading data ...");
             try {
@@ -120,6 +134,9 @@ public class EmployeeManager {
                 w.close();
             } catch (Exception e) {}
             System.out.println("Data Deleted.");
+        } else {
+            System.out.println("Invalid argument!");
+            System.out.println("Use one of: l, s, +name, ?name, c, uname, dname");
         }
     }
 }
