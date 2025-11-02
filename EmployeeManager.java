@@ -57,9 +57,15 @@ public class EmployeeManager {
         else if (command.startsWith("?")) {
             System.out.println("Loading data ...");
             try {
-                if (readEmployees().contains(command.substring(1))) {
+                List<String> employees = readEmployees();
+                String searchEmployee = command.substring(1);
+
+                if (employees.contains(searchEmployee)) {
                     System.out.println("Employee found!");
+                } else {
+                    System.out.println("Employee not found!");
                 }
+
             } catch (Exception ex) {}
             System.out.println("Data Loaded.");
         } 
@@ -115,7 +121,7 @@ public class EmployeeManager {
         }
     }
 
-    // Helper Methods
+    //Helper Methods 
 
     private static List<String> readEmployees() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(Constants.EMPLOYEE_FILE)));
