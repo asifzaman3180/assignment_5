@@ -9,24 +9,59 @@ import java.util.*;
  */
 public class EmployeeManager {
     public static void main(String[] args) {
-        // ✅ Validate command-line arguments
+        // ✅ Validate command-line arguments (Task 9)
         if (args.length != 1) {
-            System.out.println("Usage: java EmployeeManager <option>");
-            System.out.println("Options: l (list), s (search), + (add), ? (help), c (count), u (update)");
+            System.out.println("❌ Invalid number of arguments.");
+            printUsageGuide();
             System.exit(1);
         }
 
-        String userOption = args[0];
+        String userOption = args[0].trim().toLowerCase();
 
+        if (!isValidOption(userOption)) {
+            System.out.println("❌ Unsupported option: " + userOption);
+            printUsageGuide();
+            System.exit(1);
+        }
+
+        // ✅ Safe switch structure
         switch (userOption) {
             case Constants.OPTION_LIST -> listEmployees();
             case Constants.OPTION_SEARCH -> searchEmployee();
             case Constants.OPTION_ADD -> addEmployee();
-            case Constants.OPTION_COUNT -> countEmployees(); // Simplified in this task
+            case Constants.OPTION_COUNT -> countEmployees();
             case Constants.OPTION_UPDATE -> updateEmployee();
             case Constants.OPTION_HELP -> showHelp();
             default -> System.out.println(Constants.INVALID_OPTION_MESSAGE);
         }
+    }
+
+    // ============================================================
+    // 🔒 Validation Helpers
+    // ============================================================
+    private static boolean isValidOption(String option) {
+        return Set.of(
+                Constants.OPTION_LIST,
+                Constants.OPTION_SEARCH,
+                Constants.OPTION_ADD,
+                Constants.OPTION_COUNT,
+                Constants.OPTION_UPDATE,
+                Constants.OPTION_HELP).contains(option);
+    }
+
+    private static void printUsageGuide() {
+        System.out.println("""
+                ✅ Usage:
+                java EmployeeManager <option>
+
+                Available options:
+                  l  - List all employees
+                  s  - Search for an employee
+                  +  - Add a new employee
+                  c  - Count total employees
+                  u  - Update an existing employee
+                  ?  - Show help menu
+                """);
     }
 
     // ============================================================
@@ -36,7 +71,7 @@ public class EmployeeManager {
         List<String> employeeList = readEmployeesFromFile();
 
         if (employeeList.isEmpty()) {
-            System.out.println("No employees found.");
+            System.out.println("⚠️ No employees found.");
             return;
         }
 
@@ -50,18 +85,27 @@ public class EmployeeManager {
     private static void searchEmployee() {
         Scanner inputScanner = new Scanner(System.in);
         System.out.print("Enter name to search: ");
-        String query = inputScanner.nextLine().trim().toLowerCase();
+        String query = inputScanner.nextLine().trim();
+
+        if (query.isEmpty()) {
+            System.out.println("⚠️ Search query cannot be empty.");
+            return;
+        }
 
         List<String> employeeList = readEmployeesFromFile();
+        if (employeeList.isEmpty()) {
+            System.out.println("⚠️ No employees available for searching.");
+            return;
+        }
 
         List<String> matchedEmployees = employeeList.stream()
-                .filter(name -> name.toLowerCase().contains(query))
+                .filter(name -> name.toLowerCase().contains(query.toLowerCase()))
                 .toList();
 
         if (matchedEmployees.isEmpty()) {
-            System.out.println("No match found.");
+            System.out.println("❌ No match found for \"" + query + "\".");
         } else {
-            matchedEmployees.forEach(name -> System.out.println("Found: " + name));
+            matchedEmployees.forEach(name -> System.out.println("✅ Found: " + name));
         }
     }
 
@@ -74,34 +118,34 @@ public class EmployeeManager {
         String newName = inputScanner.nextLine().trim();
 
         if (newName.isEmpty()) {
-            System.out.println("Invalid name.");
+            System.out.println("⚠️ Invalid name. Please enter a valid employee name.");
             return;
         }
 
         List<String> employeeList = readEmployeesFromFile();
+
         if (employeeList.contains(newName)) {
-            System.out.println("Employee already exists.");
+            System.out.println("⚠️ Employee \"" + newName + "\" already exists.");
             return;
         }
 
         employeeList.add(newName);
         writeEmployeesToFile(employeeList);
-        System.out.println("Employee added successfully.");
+        System.out.println("✅ Employee \"" + newName + "\" added successfully.");
     }
 
     // ============================================================
-    // 🔢 4. COUNT EMPLOYEES (Simplified for Task 8)
+    // 🔢 4. COUNT EMPLOYEES
     // ============================================================
     private static void countEmployees() {
         int totalEmployees = readEmployeesFromFile().size();
 
-        // ✅ Cleaner logic and better message
         if (totalEmployees == 0) {
-            System.out.println("No employees found in the record.");
+            System.out.println("⚠️ No employees found in the record.");
         } else if (totalEmployees == 1) {
-            System.out.println("There is 1 employee in the record.");
+            System.out.println("📊 There is 1 employee in the record.");
         } else {
-            System.out.printf("There are %d employees in the record.%n", totalEmployees);
+            System.out.printf("📊 There are %d employees in the record.%n", totalEmployees);
         }
     }
 
@@ -113,15 +157,20 @@ public class EmployeeManager {
         List<String> employeeList = readEmployeesFromFile();
 
         if (employeeList.isEmpty()) {
-            System.out.println("No employees to update.");
+            System.out.println("⚠️ No employees available to update.");
             return;
         }
 
         System.out.print("Enter the employee name to update: ");
         String oldName = inputScanner.nextLine().trim();
 
+        if (oldName.isEmpty()) {
+            System.out.println("⚠️ Invalid input. Name cannot be empty.");
+            return;
+        }
+
         if (!employeeList.contains(oldName)) {
-            System.out.println("Employee not found.");
+            System.out.println("❌ Employee \"" + oldName + "\" not found.");
             return;
         }
 
@@ -129,26 +178,20 @@ public class EmployeeManager {
         String newName = inputScanner.nextLine().trim();
 
         if (newName.isEmpty()) {
-            System.out.println("Invalid new name.");
+            System.out.println("⚠️ Invalid new name. Please enter a valid one.");
             return;
         }
 
         employeeList.set(employeeList.indexOf(oldName), newName);
         writeEmployeesToFile(employeeList);
-        System.out.println("Employee updated successfully.");
+        System.out.println("✅ Employee updated successfully.");
     }
 
     // ============================================================
     // 🧠 6. SHOW HELP
     // ============================================================
     private static void showHelp() {
-        System.out.println("Available Options:");
-        System.out.println("l - List employees");
-        System.out.println("s - Search employee");
-        System.out.println("+ - Add employee");
-        System.out.println("c - Count employees");
-        System.out.println("u - Update employee");
-        System.out.println("? - Show help");
+        printUsageGuide();
     }
 
     // ============================================================
@@ -165,8 +208,10 @@ public class EmployeeManager {
                         .filter(name -> !name.isEmpty())
                         .forEach(employeeList::add);
             }
+        } catch (FileNotFoundException e) {
+            System.out.println("⚠️ Employee file not found. A new one will be created on next save.");
         } catch (IOException ioException) {
-            System.out.println("Error reading file: " + ioException.getMessage());
+            System.out.println("❌ Error reading file: " + ioException.getMessage());
         }
 
         return employeeList;
@@ -176,7 +221,7 @@ public class EmployeeManager {
         try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE_PATH))) {
             fileWriter.write(String.join(",", employeeList));
         } catch (IOException ioException) {
-            System.out.println("Error writing file: " + ioException.getMessage());
+            System.out.println("❌ Error writing to file: " + ioException.getMessage());
         }
     }
 }
