@@ -1,134 +1,133 @@
-// File Name: EmployeeManager.java
 import java.io.*;
 import java.util.*;
 
 public class EmployeeManager {
 
-    // ✅ Read all employees from file
-    private static List<String> readEmployees() throws IOException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(Constants.EMPLOYEE_FILE))) {
-            String line = reader.readLine();
-            if (line == null || line.isEmpty()) {
-                return new ArrayList<>();
-            }
-            return new ArrayList<>(Arrays.asList(line.split(",")));
+// ✅ Read all employees from file
+private static List<String> readEmployees() throws IOException {
+    try (BufferedReader reader = new BufferedReader(new FileReader(Constants.EMPLOYEE_FILE))) {
+        String line = reader.readLine();
+        if (line == null || line.isEmpty()) {
+            return new ArrayList<>();
         }
+        return new ArrayList<>(Arrays.asList(line.split(",")));
+    }
+}
+
+// ✅ Write all employees to file
+private static void writeEmployees(List<String> employees) throws IOException {
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE))) {
+        writer.write(String.join(",", employees));
+    }
+}
+
+// ✅ Append a new employee
+private static void appendEmployee(String employeeName) throws IOException {
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE, true))) {
+        writer.write(", " + employeeName);
+    }
+}
+
+public static void main(String[] args) {
+
+    // ✅ Validate arguments
+    if (args.length != 1) {
+        System.out.println("Usage:");
+        System.out.println("  java EmployeeManager l         // List all employees");
+        System.out.println("  java EmployeeManager s         // Show a random employee");
+        System.out.println("  java EmployeeManager +Name     // Add a new employee");
+        System.out.println("  java EmployeeManager ?Name     // Search for an employee");
+        System.out.println("  java EmployeeManager c         // Count employees");
+        System.out.println("  java EmployeeManager uName     // Update employee");
+        System.out.println("  java EmployeeManager dName     // Delete employee");
+        return;
     }
 
-    // ✅ Write all employees to file
-    private static void writeEmployees(List<String> employees) throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE))) {
-            writer.write(String.join(",", employees));
-        }
-    }
+    String command = args[0].trim();
 
-    // ✅ Append a new employee
-    private static void appendEmployee(String employeeName) throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE, true))) {
-            writer.write(", " + employeeName);
-        }
-    }
-
-    public static void main(String[] args) {
-
-        // ✅ Validate arguments
-        if (args.length != 1) {
-            System.out.println("Usage:");
-            System.out.println("  java EmployeeManager l         // List all employees");
-            System.out.println("  java EmployeeManager s         // Show a random employee");
-            System.out.println("  java EmployeeManager +Name     // Add a new employee");
-            System.out.println("  java EmployeeManager ?Name     // Search for an employee");
-            System.out.println("  java EmployeeManager c         // Count employees");
-            System.out.println("  java EmployeeManager uName     // Update employee");
-            System.out.println("  java EmployeeManager dName     // Delete employee");
-            return;
-        }
-
-        String command = args[0].trim();
-
-        try {
-            if (command.equals("l")) { // ✅ List all employees
-                System.out.println(Constants.LOADING_MSG);
-                List<String> employees = readEmployees();
-                if (employees.isEmpty()) {
-                    System.out.println("No employees found.");
-                } else {
-                    employees.forEach(System.out::println);
-                }
-                System.out.println(Constants.DATA_LOADED_MSG);
-
-            } else if (command.equals("s")) { // ✅ Show a random employee
-                System.out.println(Constants.LOADING_MSG);
-                List<String> employees = readEmployees();
-                if (employees.isEmpty()) {
-                    System.out.println(Constants.EMPLOYEE_NOT_FOUND_MSG);
-                } else {
-                    String randomEmp = employees.get(new Random().nextInt(employees.size()));
-                    System.out.println("Random employee: " + randomEmp.trim());
-                }
-                System.out.println(Constants.DATA_LOADED_MSG);
-
-            } else if (command.startsWith("+")) { // ✅ Add new employee
-                System.out.println(Constants.LOADING_MSG);
-                appendEmployee(command.substring(1).trim());
-                System.out.println("Employee added successfully.");
-                System.out.println(Constants.DATA_LOADED_MSG);
-
-            } else if (command.startsWith("?")) { // ✅ Improved Search
-                System.out.println(Constants.LOADING_MSG);
-                String searchName = command.substring(1).trim();
-                List<String> employees = readEmployees();
-
-                // Stream-based, case-insensitive search — no flag variable needed
-                boolean employeeExists = employees.stream()
-                        .map(String::trim)
-                        .anyMatch(emp -> emp.equalsIgnoreCase(searchName));
-
-                if (employeeExists) {
-                    System.out.println(Constants.EMPLOYEE_FOUND_MSG + " (" + searchName + ")");
-                } else {
-                    System.out.println(Constants.EMPLOYEE_NOT_FOUND_MSG + " (" + searchName + ")");
-                }
-                System.out.println(Constants.DATA_LOADED_MSG);
-
-            } else if (command.equals("c")) { // ✅ Count employees
-                System.out.println(Constants.LOADING_MSG);
-                int count = readEmployees().size();
-                System.out.println(count + " employee(s) found.");
-                System.out.println(Constants.DATA_LOADED_MSG);
-
-            } else if (command.startsWith("u")) { // ✅ Update employee
-                System.out.println(Constants.LOADING_MSG);
-                List<String> employees = readEmployees();
-                String updateName = command.substring(1).trim();
-
-                if (employees.contains(updateName)) {
-                    Collections.replaceAll(employees, updateName, "Updated");
-                    writeEmployees(employees);
-                    System.out.println(Constants.DATA_UPDATED_MSG + " (" + updateName + ")");
-                } else {
-                    System.out.println(Constants.EMPLOYEE_NOT_FOUND_MSG + " (" + updateName + ")");
-                }
-
-            } else if (command.startsWith("d")) { // ✅ Delete employee
-                System.out.println(Constants.LOADING_MSG);
-                List<String> employees = readEmployees();
-                String deleteName = command.substring(1).trim();
-
-                if (employees.removeIf(emp -> emp.trim().equalsIgnoreCase(deleteName))) {
-                    writeEmployees(employees);
-                    System.out.println(Constants.DATA_DELETED_MSG + " (" + deleteName + ")");
-                } else {
-                    System.out.println(Constants.EMPLOYEE_NOT_FOUND_MSG + " (" + deleteName + ")");
-                }
-
+    try {
+        if (command.equals("l")) { // List all employees
+            System.out.println(Constants.LOADING_MSG);
+            List<String> employees = readEmployees();
+            if (employees.isEmpty()) {
+                System.out.println("No employees found.");
             } else {
-                System.out.println("Invalid command! Please use: l, s, +Name, ?Name, c, uName, dName");
+                employees.forEach(System.out::println);
+            }
+            System.out.println(Constants.DATA_LOADED_MSG);
+
+        } else if (command.equals("s")) { //  Show a random employee
+            System.out.println(Constants.LOADING_MSG);
+            List<String> employees = readEmployees();
+            if (employees.isEmpty()) {
+                System.out.println(Constants.EMPLOYEE_NOT_FOUND_MSG);
+            } else {
+                String randomEmp = employees.get(new Random().nextInt(employees.size()));
+                System.out.println("Random employee: " + randomEmp.trim());
+            }
+            System.out.println(Constants.DATA_LOADED_MSG);
+
+        } else if (command.startsWith("+")) { // ✅ Add new employee
+            System.out.println(Constants.LOADING_MSG);
+            appendEmployee(command.substring(1).trim());
+            System.out.println("Employee added successfully.");
+            System.out.println(Constants.DATA_LOADED_MSG);
+
+        } else if (command.startsWith("?")) { // Improved Search
+            System.out.println(Constants.LOADING_MSG);
+            String searchName = command.substring(1).trim();
+            List<String> employees = readEmployees();
+
+            boolean employeeExists = employees.stream()
+                    .map(String::trim)
+                    .anyMatch(emp -> emp.equalsIgnoreCase(searchName));
+
+            if (employeeExists) {
+                System.out.println(Constants.EMPLOYEE_FOUND_MSG + " (" + searchName + ")");
+            } else {
+                System.out.println(Constants.EMPLOYEE_NOT_FOUND_MSG + " (" + searchName + ")");
+            }
+            System.out.println(Constants.DATA_LOADED_MSG);
+
+        } else if (command.equals("c")) { //  Count employees (streamlined)
+            System.out.println(Constants.LOADING_MSG);
+            System.out.println(readEmployees().size() + " employee(s) found.");
+            System.out.println(Constants.DATA_LOADED_MSG);
+
+        } else if (command.startsWith("u")) { //  Update employee
+            System.out.println(Constants.LOADING_MSG);
+            List<String> employees = readEmployees();
+            String updateName = command.substring(1).trim();
+
+            if (employees.contains(updateName)) {
+                Collections.replaceAll(employees, updateName, "Updated");
+                writeEmployees(employees);
+                System.out.println(Constants.DATA_UPDATED_MSG + " (" + updateName + ")");
+            } else {
+                System.out.println(Constants.EMPLOYEE_NOT_FOUND_MSG + " (" + updateName + ")");
             }
 
-        } catch (IOException e) {
-            System.out.println("Error while accessing file:");
-            e.printStackTrace();
+        } else if (command.startsWith("d")) { //  Delete employee
+            System.out.println(Constants.LOADING_MSG);
+            List<String> employees = readEmployees();
+            String deleteName = command.substring(1).trim();
+
+            if (employees.removeIf(emp -> emp.trim().equalsIgnoreCase(deleteName))) {
+                writeEmployees(employees);
+                System.out.println(Constants.DATA_DELETED_MSG + " (" + deleteName + ")");
+            } else {
+                System.out.println(Constants.EMPLOYEE_NOT_FOUND_MSG + " (" + deleteName + ")");
+            }
+
+        } else {
+            System.out.println("Invalid command! Please use: l, s, +Name, ?Name, c, uName, dName");
         }
+
+    } catch (IOException e) {
+        System.out.println("Error while accessing file:");
+        e.printStackTrace();
     }
+}
+
+
 }
