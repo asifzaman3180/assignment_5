@@ -66,10 +66,10 @@ public class EmployeeManager {
                     System.out.println(Constants.DATA_LOADED);
                 }
 
-                // Count employees
+                // Simplified count operation
                 case 'c' -> {
                     int count = readEmployeeData().length;
-                    System.out.println(count + " employee(s) found.");
+                    System.out.printf("There are %d employee(s) in the file.%n", count);
                     System.out.println(Constants.DATA_LOADED);
                 }
 
