@@ -100,8 +100,9 @@ public class EmployeeManager {
 
                 case CMD_COUNT -> {
                     String[] employees = readEmployees();
-                    System.out.println(employees.length + " word(s) found " +
-                            String.join(",", employees).length());
+                    int wordCount = employees.length;
+                    int charCount = String.join("", employees).length(); // excludes commas/spaces
+                    System.out.println(wordCount + " word(s) found, " + charCount + " character(s) total.");
                     System.out.println(MSG_DATA_LOADED);
                 }
 
