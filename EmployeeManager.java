@@ -4,7 +4,7 @@ import java.util.*;
 /**
  * EmployeeManager.java
  *
- * Manages employee records stored in employees.txt
+ * Manages employee records stored in employees.txt.
  * Supports: list, search, add, count, update, and help operations.
  */
 public class EmployeeManager {
@@ -18,35 +18,14 @@ public class EmployeeManager {
 
         String userOption = args[0];
 
-        // ✅ Switch statement uses clear, single-purpose flow
         switch (userOption) {
-            case Constants.OPTION_LIST:
-                listEmployees();
-                break;
-
-            case Constants.OPTION_SEARCH:
-                searchEmployee();
-                break;
-
-            case Constants.OPTION_ADD:
-                addEmployee();
-                break;
-
-            case Constants.OPTION_COUNT:
-                countEmployees();
-                break;
-
-            case Constants.OPTION_UPDATE:
-                updateEmployee();
-                break;
-
-            case Constants.OPTION_HELP:
-                showHelp();
-                break;
-
-            default:
-                System.out.println(Constants.INVALID_OPTION_MESSAGE);
-                break;
+            case Constants.OPTION_LIST -> listEmployees();
+            case Constants.OPTION_SEARCH -> searchEmployee();
+            case Constants.OPTION_ADD -> addEmployee();
+            case Constants.OPTION_COUNT -> countEmployees(); // Simplified in this task
+            case Constants.OPTION_UPDATE -> updateEmployee();
+            case Constants.OPTION_HELP -> showHelp();
+            default -> System.out.println(Constants.INVALID_OPTION_MESSAGE);
         }
     }
 
@@ -66,7 +45,7 @@ public class EmployeeManager {
     }
 
     // ============================================================
-    // 🔍 2. SEARCH EMPLOYEE (Simplified Control Flow)
+    // 🔍 2. SEARCH EMPLOYEE
     // ============================================================
     private static void searchEmployee() {
         Scanner inputScanner = new Scanner(System.in);
@@ -75,7 +54,6 @@ public class EmployeeManager {
 
         List<String> employeeList = readEmployeesFromFile();
 
-        // ✅ Simplified search using Java Streams
         List<String> matchedEmployees = employeeList.stream()
                 .filter(name -> name.toLowerCase().contains(query))
                 .toList();
@@ -112,15 +90,23 @@ public class EmployeeManager {
     }
 
     // ============================================================
-    // 🔢 4. COUNT EMPLOYEES
+    // 🔢 4. COUNT EMPLOYEES (Simplified for Task 8)
     // ============================================================
     private static void countEmployees() {
-        int count = readEmployeesFromFile().size();
-        System.out.println("Total employees: " + count);
+        int totalEmployees = readEmployeesFromFile().size();
+
+        // ✅ Cleaner logic and better message
+        if (totalEmployees == 0) {
+            System.out.println("No employees found in the record.");
+        } else if (totalEmployees == 1) {
+            System.out.println("There is 1 employee in the record.");
+        } else {
+            System.out.printf("There are %d employees in the record.%n", totalEmployees);
+        }
     }
 
     // ============================================================
-    // ✏️ 5. UPDATE EMPLOYEE (Simplified Control Flow)
+    // ✏️ 5. UPDATE EMPLOYEE
     // ============================================================
     private static void updateEmployee() {
         Scanner inputScanner = new Scanner(System.in);
