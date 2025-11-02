@@ -1,23 +1,40 @@
 import java.io.*;
 import java.util.*;
 
+/**
+ * EmployeeManager
+ * ----------------
+ * This program manages a list of employees stored in a text file.
+ * It supports operations like:
+ *  - Listing all employees
+ *  - Showing a random employee
+ *  - Adding a new employee
+ *  - Searching for an employee
+ *  - Counting employees
+ *  - Updating or deleting an employee
+ *
+ * File: employees.txt
+ * Format: comma-separated names (e.g., John Doe,Jane Smith)
+ */
+
 public class EmployeeManager {
 
     public static void main(String[] args) {
-        // Argument validation
+
+        //  Validate command-line arguments
         if (args == null || args.length != 1) {
             System.out.println("Invalid number of arguments!");
             System.out.println(Constants.USAGE_MESSAGE);
             return;
         }
 
-        String rawCommand = args[0];
+        String commandInput = args[0]; // e.g. "+John", "l", "?Alice"
+        String commandType = getCommandType(commandInput);
+        String argument = getCommandArgument(commandInput);
 
-        // Determine command type and parameter (if any)
-        String cmdType = getCommandType(rawCommand);
-        String parameter = getParameter(rawCommand);
+        //  Process command using switch-case
+        switch (commandType) {
 
-        switch (cmdType) {
             case "LIST":
                 System.out.println("Loading data ...");
                 listEmployees();
@@ -31,24 +48,21 @@ public class EmployeeManager {
                 break;
 
             case "ADD":
-                // Validate parameter for add
-                if (!isValidName(parameter)) {
-                    System.out.println("Error: missing or invalid name for add (+Name).");
-                    System.out.println("Example: java EmployeeManager +John_Doe");
+                if (!isValidName(argument)) {
+                    System.out.println("Error: Missing name for add command (+Name).");
                 } else {
                     System.out.println("Loading data ...");
-                    appendEmployee(parameter);
+                    appendEmployee(argument);
                     System.out.println("Data Loaded.");
                 }
                 break;
 
             case "SEARCH":
-                if (!isValidName(parameter)) {
-                    System.out.println("Error: missing or invalid name for search (?Name).");
-                    System.out.println("Example: java EmployeeManager ?John_Doe");
+                if (!isValidName(argument)) {
+                    System.out.println("Error: Missing name for search command (?Name).");
                 } else {
                     System.out.println("Loading data ...");
-                    searchEmployee(parameter);
+                    searchEmployee(argument);
                     System.out.println("Data Loaded.");
                 }
                 break;
@@ -60,32 +74,34 @@ public class EmployeeManager {
                 break;
 
             case "UPDATE":
-                if (!isValidName(parameter)) {
-                    System.out.println("Error: missing or invalid name for update (uName).");
-                    System.out.println("Example: java EmployeeManager uJohn_Doe");
+                if (!isValidName(argument)) {
+                    System.out.println("Error: Missing name for update command (uName).");
                 } else {
                     System.out.println("Loading data ...");
-                    updateEmployee(parameter);
+                    updateEmployee(argument);
                 }
                 break;
 
             case "DELETE":
-                if (!isValidName(parameter)) {
-                    System.out.println("Error: missing or invalid name for delete (dName).");
-                    System.out.println("Example: java EmployeeManager dJohn_Doe");
+                if (!isValidName(argument)) {
+                    System.out.println("Error: Missing name for delete command (dName).");
                 } else {
                     System.out.println("Loading data ...");
-                    deleteEmployee(parameter);
+                    deleteEmployee(argument);
                 }
                 break;
 
             default:
-                System.out.println("Invalid command: " + rawCommand);
+                System.out.println("Invalid command: " + commandInput);
                 System.out.println(Constants.USAGE_MESSAGE);
         }
     }
 
-    // Return command type string based on raw input
+    // ------------------------------------------------------------
+    // 🔹 Command Parsing Methods
+    // ------------------------------------------------------------
+
+    /** Returns the command type based on the first character of input */
     private static String getCommandType(String cmd) {
         if (cmd == null || cmd.isEmpty()) return "INVALID";
         if ("l".equals(cmd)) return "LIST";
@@ -98,90 +114,110 @@ public class EmployeeManager {
         return "INVALID";
     }
 
-    // Extract parameter (part after prefix), trimmed; returns empty string if none
-    private static String getParameter(String raw) {
-        if (raw == null || raw.length() == 0) return "";
-        if (raw.startsWith("+") || raw.startsWith("?")) {
-            return raw.length() > 1 ? raw.substring(1).trim() : "";
-        }
-        if (raw.startsWith("u") || raw.startsWith("d")) {
-            return raw.length() > 1 ? raw.substring(1).trim() : "";
-        }
-        return "";
+    /** Extracts the name/parameter from a command like "+John" or "?Alice" */
+    private static String getCommandArgument(String raw) {
+        if (raw == null || raw.length() <= 1) return "";
+        return raw.substring(1).trim();
     }
 
-    // Basic validation for a name parameter (non-empty, not just spaces)
+    /** Checks whether a name is valid (non-empty) */
     private static boolean isValidName(String name) {
         return name != null && !name.trim().isEmpty();
     }
 
-    // ---------------- File I/O helpers ----------------
+    // ------------------------------------------------------------
+    // 🔹 File Handling Methods
+    // ------------------------------------------------------------
 
-    private static List<String> readEmployees() {
+    /** Reads the list of employees from file */
+    private static List<String> readEmployeesFromFile() {
         List<String> employees = new ArrayList<>();
         File file = new File(Constants.EMPLOYEE_FILE);
+
         if (!file.exists()) return employees;
+
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line = reader.readLine();
             if (line != null && !line.trim().isEmpty()) {
-                for (String p : line.split(",")) employees.add(p.trim());
+                for (String emp : line.split(",")) {
+                    employees.add(emp.trim());
+                }
             }
-        } catch (IOException ioe) {
-            System.out.println("Error reading file: " + ioe.getMessage());
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
         }
+
         return employees;
     }
 
-    private static void writeEmployees(List<String> employees) {
+    /** Writes the updated list of employees to the file */
+    private static void writeEmployeesToFile(List<String> employees) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE))) {
             writer.write(String.join(",", employees));
-        } catch (IOException ioe) {
-            System.out.println("Error writing file: " + ioe.getMessage());
+        } catch (IOException e) {
+            System.out.println("Error writing file: " + e.getMessage());
         }
     }
 
+    /** Appends a new employee to the file */
     private static void appendEmployee(String name) {
         File file = new File(Constants.EMPLOYEE_FILE);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
-            if (file.exists() && file.length() > 0) writer.write("," + name);
-            else writer.write(name);
-        } catch (IOException ioe) {
-            System.out.println("Error appending: " + ioe.getMessage());
+            if (file.exists() && file.length() > 0)
+                writer.write("," + name);
+            else
+                writer.write(name);
+        } catch (IOException e) {
+            System.out.println("Error adding employee: " + e.getMessage());
         }
     }
 
-    // ---------------- Command handlers ----------------
+    // ------------------------------------------------------------
+    // 🔹 Command Logic Methods
+    // ------------------------------------------------------------
 
+    /** Lists all employees */
     private static void listEmployees() {
-        List<String> employees = readEmployees();
-        if (employees.isEmpty()) System.out.println("(No employees found)");
-        else employees.forEach(System.out::println);
+        List<String> employees = readEmployeesFromFile();
+        if (employees.isEmpty())
+            System.out.println("(No employees found)");
+        else
+            employees.forEach(System.out::println);
     }
 
+    /** Shows a random employee */
     private static void showRandomEmployee() {
-        List<String> employees = readEmployees();
-        if (employees.isEmpty()) System.out.println("(No employees to show)");
-        else System.out.println(employees.get(new Random().nextInt(employees.size())));
+        List<String> employees = readEmployeesFromFile();
+        if (employees.isEmpty())
+            System.out.println("(No employees to show)");
+        else
+            System.out.println("Random Employee: " + employees.get(new Random().nextInt(employees.size())));
     }
 
+    /** Searches for an employee by name */
     private static void searchEmployee(String name) {
-        List<String> employees = readEmployees();
-        System.out.println(employees.contains(name) ? "Employee found!" : "Employee NOT found.");
+        List<String> employees = readEmployeesFromFile();
+        if (employees.contains(name))
+            System.out.println("Employee found!");
+        else
+            System.out.println("Employee NOT found.");
     }
 
+    /** Counts total employees and shows statistics */
     private static void countEmployees() {
-        List<String> employees = readEmployees();
+        List<String> employees = readEmployeesFromFile();
         if (employees.isEmpty()) {
             System.out.println("No employees found.");
             return;
         }
-        int totalEmployees = employees.size();
-        double averageNameLength = employees.stream().mapToInt(String::length).average().orElse(0);
-        System.out.printf("Total Employees: %d | Average Name Length: %.2f%n", totalEmployees, averageNameLength);
+        int total = employees.size();
+        double avgLength = employees.stream().mapToInt(String::length).average().orElse(0);
+        System.out.printf("Total Employees: %d | Average Name Length: %.2f%n", total, avgLength);
     }
 
+    /** Updates a specific employee to "Updated" */
     private static void updateEmployee(String name) {
-        List<String> employees = readEmployees();
+        List<String> employees = readEmployeesFromFile();
         boolean updated = false;
         for (int i = 0; i < employees.size(); i++) {
             if (employees.get(i).equals(name)) {
@@ -190,21 +226,22 @@ public class EmployeeManager {
             }
         }
         if (updated) {
-            writeEmployees(employees);
-            System.out.println("Data Updated.");
+            writeEmployeesToFile(employees);
+            System.out.println("Employee updated successfully.");
         } else {
-            System.out.println("No matching employee to update.");
+            System.out.println("No matching employee found for update.");
         }
     }
 
+    /** Deletes an employee by name */
     private static void deleteEmployee(String name) {
-        List<String> employees = readEmployees();
-        boolean removed = employees.removeIf(e -> e.equals(name));
+        List<String> employees = readEmployeesFromFile();
+        boolean removed = employees.removeIf(emp -> emp.equals(name));
         if (removed) {
-            writeEmployees(employees);
-            System.out.println("Data Deleted.");
+            writeEmployeesToFile(employees);
+            System.out.println("Employee deleted successfully.");
         } else {
-            System.out.println("No matching employee to delete.");
+            System.out.println("No matching employee found to delete.");
         }
     }
 }
