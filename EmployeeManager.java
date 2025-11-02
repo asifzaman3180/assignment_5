@@ -72,12 +72,14 @@ public class EmployeeManager {
             try {
                 String[] employeeList = readAllEmployeesFromFile();
                 String targetEmployeeName = args[0].substring(1);
-                for (int employeeIndex = 0; employeeIndex < employeeList.length; employeeIndex++) {
-                    if (employeeList[employeeIndex].equals(targetEmployeeName)) {
+                for (String employee : employeeList) {
+                    if (employee.equals(targetEmployeeName)) {
                         System.out.println(Constants.EMPLOYEE_FOUND_MESSAGE);
-                        break;
+                        System.out.println(Constants.DATA_LOADED_MESSAGE);
+                        return;
                     }
                 }
+                System.out.println("Employee not found.");
             } catch (Exception exception) {
             }
             System.out.println(Constants.DATA_LOADED_MESSAGE);
