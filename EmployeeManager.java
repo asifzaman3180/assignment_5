@@ -7,7 +7,7 @@ public class EmployeeManager {
     // Reusable method to read all employees from file
     private static String[] readAllEmployeesFromFile() throws IOException {
         BufferedReader fileReader = new BufferedReader(
-            new InputStreamReader(new FileInputStream("employees.txt"))
+            new InputStreamReader(new FileInputStream(Constants.EMPLOYEE_DATA_FILE))
         );
         String fileContent = fileReader.readLine();
         fileReader.close();
@@ -20,14 +20,14 @@ public class EmployeeManager {
     
     // Reusable method to write employees to file
     private static void writeEmployeesToFile(String[] employeeList) throws IOException {
-        BufferedWriter fileWriter = new BufferedWriter(new FileWriter("employees.txt"));
+        BufferedWriter fileWriter = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_DATA_FILE));
         fileWriter.write(String.join(",", employeeList));
         fileWriter.close();
     }
     
     // Reusable method to append employee to file
     private static void appendEmployeeToFile(String newEmployeeName) throws IOException {
-        BufferedWriter fileWriter = new BufferedWriter(new FileWriter("employees.txt", true));
+        BufferedWriter fileWriter = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_DATA_FILE, true));
         fileWriter.write(", " + newEmployeeName);
         fileWriter.close();
     }
@@ -35,64 +35,56 @@ public class EmployeeManager {
     public static void main(String[] args) {
         // Validate command-line arguments
         if (args.length != 1) {
-            System.out.println("Error: Please provide exactly one command argument.");
-            System.out.println("Usage: java EmployeeManager <command>");
-            System.out.println("Commands: l, s, +<name>, ?<name>, c, u<name>, d<name>");
+            System.out.println(Constants.INVALID_ARGUMENT_ERROR);
+            System.out.println(Constants.USAGE_MESSAGE);
+            System.out.println(Constants.COMMANDS_LIST);
             return;
         }
         
-        String userCommand = args[0];
-        
         // Check arguments
-        if (userCommand.equals("l")) {
-            System.out.println("Loading data ...");
+        if (args[0].equals(Constants.LIST_COMMAND)) {
+            System.out.println(Constants.LOADING_DATA_MESSAGE);
             try {
-                String[] employeeList = readAllEmployeesFromFile();
-                for (String employeeName : employeeList) {
+                for (String employeeName : readAllEmployeesFromFile()) {
                     System.out.println(employeeName);
                 }
             } catch (Exception exception) {
             }
-            System.out.println("Data Loaded.");
-        } else if (userCommand.equals("s")) {
-            System.out.println("Loading data ...");
+            System.out.println(Constants.DATA_LOADED_MESSAGE);
+        } else if (args[0].equals(Constants.RANDOM_COMMAND)) {
+            System.out.println(Constants.LOADING_DATA_MESSAGE);
             try {
                 String[] employeeList = readAllEmployeesFromFile();
                 System.out.println(String.join(",", employeeList));
-                Random randomGenerator = new Random();
-                int randomEmployeeIndex = randomGenerator.nextInt(employeeList.length);
-                System.out.println(employeeList[randomEmployeeIndex]);
+                System.out.println(employeeList[new Random().nextInt(employeeList.length)]);
             } catch (Exception exception) {
             }
-            System.out.println("Data Loaded.");
-        } else if (userCommand.contains("+")) {
-            System.out.println("Loading data ...");
+            System.out.println(Constants.DATA_LOADED_MESSAGE);
+        } else if (args[0].contains(Constants.ADD_COMMAND_PREFIX)) {
+            System.out.println(Constants.LOADING_DATA_MESSAGE);
             try {
-                String newEmployeeName = userCommand.substring(1);
-                appendEmployeeToFile(newEmployeeName);
+                appendEmployeeToFile(args[0].substring(1));
             } catch (Exception exception) {
             }
-            System.out.println("Data Loaded.");
-        } else if (userCommand.contains("?")) {
-            System.out.println("Loading data ...");
+            System.out.println(Constants.DATA_LOADED_MESSAGE);
+        } else if (args[0].contains(Constants.SEARCH_COMMAND_PREFIX)) {
+            System.out.println(Constants.LOADING_DATA_MESSAGE);
             try {
                 String[] employeeList = readAllEmployeesFromFile();
-                boolean employeeFound = false;
-                String targetEmployeeName = userCommand.substring(1);
-                for (int employeeIndex = 0; employeeIndex < employeeList.length && !employeeFound; employeeIndex++) {
+                String targetEmployeeName = args[0].substring(1);
+                for (int employeeIndex = 0; employeeIndex < employeeList.length; employeeIndex++) {
                     if (employeeList[employeeIndex].equals(targetEmployeeName)) {
-                        System.out.println("Employee found!");
-                        employeeFound = true;
+                        System.out.println(Constants.EMPLOYEE_FOUND_MESSAGE);
+                        break;
                     }
                 }
             } catch (Exception exception) {
             }
-            System.out.println("Data Loaded.");
-        } else if (userCommand.contains("c")) {
-            System.out.println("Loading data ...");
+            System.out.println(Constants.DATA_LOADED_MESSAGE);
+        } else if (args[0].contains(Constants.COUNT_COMMAND)) {
+            System.out.println(Constants.LOADING_DATA_MESSAGE);
             try {
-                String[] employeeList = readAllEmployeesFromFile();
-                char[] characterArray = String.join(",", employeeList).toCharArray();
+                char[] characterArray = String.join(",", readAllEmployeesFromFile()).toCharArray();
                 boolean currentlyInWord = false;
                 int wordCount = 0;
                 for (char currentCharacter : characterArray) {
@@ -108,35 +100,33 @@ public class EmployeeManager {
                 System.out.println(wordCount + " word(s) found " + characterArray.length);
             } catch (Exception exception) {
             }
-            System.out.println("Data Loaded.");
-        } else if (userCommand.contains("u")) {
-            System.out.println("Loading data ...");
+            System.out.println(Constants.DATA_LOADED_MESSAGE);
+        } else if (args[0].contains(Constants.UPDATE_COMMAND_PREFIX)) {
+            System.out.println(Constants.LOADING_DATA_MESSAGE);
             try {
                 String[] employeeList = readAllEmployeesFromFile();
-                String employeeToUpdate = userCommand.substring(1);
                 for (int employeeIndex = 0; employeeIndex < employeeList.length; employeeIndex++) {
-                    if (employeeList[employeeIndex].equals(employeeToUpdate)) {
-                        employeeList[employeeIndex] = "Updated";
+                    if (employeeList[employeeIndex].equals(args[0].substring(1))) {
+                        employeeList[employeeIndex] = Constants.UPDATED_VALUE;
                     }
                 }
                 writeEmployeesToFile(employeeList);
             } catch (Exception exception) {
             }
-            System.out.println("Data Updated.");
-        } else if (userCommand.contains("d")) {
-            System.out.println("Loading data ...");
+            System.out.println(Constants.DATA_UPDATED_MESSAGE);
+        } else if (args[0].contains(Constants.DELETE_COMMAND_PREFIX)) {
+            System.out.println(Constants.LOADING_DATA_MESSAGE);
             try {
                 String[] employeeList = readAllEmployeesFromFile();
-                String employeeToDelete = userCommand.substring(1);
                 List<String> updatedEmployeeList = new ArrayList<>(Arrays.asList(employeeList));
-                updatedEmployeeList.remove(employeeToDelete);
+                updatedEmployeeList.remove(args[0].substring(1));
                 writeEmployeesToFile(updatedEmployeeList.toArray(new String[0]));
             } catch (Exception exception) {
             }
-            System.out.println("Data Deleted.");
+            System.out.println(Constants.DATA_DELETED_MESSAGE);
         } else {
-            System.out.println("Error: Invalid command '" + userCommand + "'");
-            System.out.println("Valid commands: l, s, +<name>, ?<name>, c, u<name>, d<name>");
+            System.out.println(Constants.INVALID_COMMAND_ERROR + args[0] + "'");
+            System.out.println(Constants.COMMANDS_LIST);
         }
     }
 }
