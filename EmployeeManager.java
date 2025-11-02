@@ -46,20 +46,11 @@ public class EmployeeManager {
             System.out.println("Loading data ...");
             String[] employeeList = readEmployees();
             if (employeeList != null) {
-                char[] characters = String.join(" ", employeeList).toCharArray();
-                int wordCount = 0;
-                boolean inWord = false;
-                for (char character : characters) {
-                    if (character == ' ') {
-                        if (!inWord) {
-                            wordCount++;
-                            inWord = true;
-                        } else {
-                            inWord = false;
-                        }
-                    }
-                }
-                System.out.println(wordCount + " word(s) found, total characters: " + characters.length);
+                String allEmployees = String.join(" ", employeeList);
+                String[] words = allEmployees.trim().split("\\s+"); // split by spaces
+                int wordCount = (allEmployees.isEmpty()) ? 0 : words.length;
+                int charCount = allEmployees.length();
+                System.out.println(wordCount + " word(s) found, total characters: " + charCount);
             }
             System.out.println("Data Loaded.");
         } 
