@@ -33,19 +33,11 @@ public class EmployeeManager {
         } 
         else if (command.startsWith("?")) {
             System.out.println("Loading data ...");
-            boolean found = false;
             String searchEmployee = command.substring(1);
             String[] employeeList = readEmployees();
-            if (employeeList != null) {
-                for (String employee : employeeList) {
-                    if (employee.equals(searchEmployee)) {
-                        System.out.println("Employee found!");
-                        found = true;
-                        break;
-                    }
-                }
-            }
-            if (!found) {
+            if (employeeList != null && Arrays.asList(employeeList).contains(searchEmployee)) {
+                System.out.println("Employee found!");
+            } else {
                 System.out.println("Employee not found!");
             }
             System.out.println("Data Loaded.");
@@ -54,9 +46,10 @@ public class EmployeeManager {
             System.out.println("Loading data ...");
             String[] employeeList = readEmployees();
             if (employeeList != null) {
+                char[] characters = String.join(" ", employeeList).toCharArray();
                 int wordCount = 0;
                 boolean inWord = false;
-                for (char character : String.join(" ", employeeList).toCharArray()) {
+                for (char character : characters) {
                     if (character == ' ') {
                         if (!inWord) {
                             wordCount++;
@@ -66,7 +59,7 @@ public class EmployeeManager {
                         }
                     }
                 }
-                System.out.println(wordCount + " word(s) found, total characters: " + String.join(" ", employeeList).length());
+                System.out.println(wordCount + " word(s) found, total characters: " + characters.length);
             }
             System.out.println("Data Loaded.");
         } 
