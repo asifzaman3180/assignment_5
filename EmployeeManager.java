@@ -4,7 +4,10 @@ import java.util.*;
 
 public class EmployeeManager {
     public static void main(String[] args) {
-
+        if (args.length == 0) {
+        System.out.println("Please provide a command (l, s, +Name, ?Name, c, uName, dName).");
+        return;
+        }
         // Check arguments
         if (args[0].equals("l")) {
             System.out.println("Loading data ...");
