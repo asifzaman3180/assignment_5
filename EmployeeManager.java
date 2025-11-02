@@ -1,3 +1,4 @@
+// File Name: EmployeeManager.java
 import java.io.*;
 import java.util.*;
 
@@ -5,15 +6,16 @@ public class EmployeeManager {
 
     private static final String FILE_PATH = Constants.EMPLOYEE_FILE_PATH;
 
+    // Read all employees from file
     private static List<String> readEmployeesFromFile() throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String data = reader.readLine();
-            return (data == null || data.isEmpty())
-                    ? new ArrayList<>()
-                    : new ArrayList<>(Arrays.asList(data.split(",\\s*")));
+            if (data == null || data.isEmpty()) return new ArrayList<>();
+            return new ArrayList<>(Arrays.asList(data.split(",\\s*")));
         }
     }
 
+    // Write employees to file
     private static void writeEmployeesToFile(List<String> employees) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             writer.write(String.join(", ", employees));
@@ -21,6 +23,8 @@ public class EmployeeManager {
     }
 
     public static void main(String[] args) {
+
+        // Validate arguments
         if (args.length != 1) {
             System.out.println("Invalid number of arguments!\nUsage:");
             System.out.println("  java EmployeeManager l          -> List all employees");
@@ -36,18 +40,21 @@ public class EmployeeManager {
         String arg = args[0];
 
         try {
+            // List all employees
             if (arg.equals("l")) {
                 System.out.println(Constants.DATA_LOADING);
                 readEmployeesFromFile().forEach(System.out::println);
                 System.out.println(Constants.DATA_LOADED);
             }
 
+            // Show random employee
             else if (arg.equals("s")) {
                 List<String> employees = readEmployeesFromFile();
                 if (employees.isEmpty()) System.out.println("No employees found.");
                 else System.out.println("Random employee: " + employees.get(new Random().nextInt(employees.size())));
             }
 
+            // Add employee
             else if (arg.startsWith("+")) {
                 List<String> employees = new ArrayList<>(readEmployeesFromFile());
                 String newName = arg.substring(1).trim();
@@ -56,6 +63,7 @@ public class EmployeeManager {
                 System.out.println("✅ Employee added: " + newName);
             }
 
+            // Search employee
             else if (arg.startsWith("?")) {
                 List<String> employees = readEmployeesFromFile();
                 String searchName = arg.substring(1).trim();
@@ -65,10 +73,19 @@ public class EmployeeManager {
                     System.out.println("❌ Employee not found: " + searchName);
             }
 
+            // Count employees (simplified)
             else if (arg.equals("c")) {
-                System.out.println("Total employees: " + readEmployeesFromFile().size());
+                System.out.println(Constants.DATA_LOADING);
+                List<String> employees = readEmployeesFromFile();
+                int count = employees.size();
+                if (count == 0)
+                    System.out.println("No employees found.");
+                else
+                    System.out.println("Total employees: " + count);
+                System.out.println(Constants.DATA_LOADED);
             }
 
+            // Update employee
             else if (arg.startsWith("u")) {
                 List<String> employees = new ArrayList<>(readEmployeesFromFile());
                 String nameToUpdate = arg.substring(1).trim();
@@ -82,6 +99,7 @@ public class EmployeeManager {
                 }
             }
 
+            // Delete employee
             else if (arg.startsWith("d")) {
                 List<String> employees = new ArrayList<>(readEmployeesFromFile());
                 String nameToDelete = arg.substring(1).trim();
@@ -93,6 +111,7 @@ public class EmployeeManager {
                 }
             }
 
+            // Invalid command
             else {
                 System.out.println("Invalid command. Please check usage.");
             }
