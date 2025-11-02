@@ -5,62 +5,69 @@ public class EmployeeManager {
 
     public static void main(String[] args) {
 
-        // Argument Validation
-        if (args.length != 6) {
+        // ------------------------------
+        // Argument Count Validation
+        // ------------------------------
+        if (args.length != Constants.VALID_COMMANDS.length) {
             System.out.println("Error: Invalid number of arguments!");
             System.out.println("Usage: java EmployeeManager l s + ? c u");
             return;
         }
 
+        // ------------------------------
+        // Invalid Command Validation
+        // ------------------------------
         for (String command : args) {
-            boolean isValidCommand = false;
-            for (String valid : Constants.VALID_COMMANDS) {
-                if (command.equals(valid)) {
-                    isValidCommand = true;
-                    break;
-                }
-            }
-            if (!isValidCommand) {
+            boolean isValid = Arrays.stream(Constants.VALID_COMMANDS)
+                                    .anyMatch(valid -> valid.equals(command));
+            if (!isValid) {
                 System.out.println("Error: Invalid command '" + command + "'");
-                return;
+                System.out.println("Valid commands are: " + String.join(", ", Constants.VALID_COMMANDS));
+                return;  // terminate program on invalid command
             }
         }
 
+        // ------------------------------
         // Read employee list
+        // ------------------------------
         List<String> employeeList = readEmployees();
 
+        // ------------------------------
         // Handle commands
+        // ------------------------------
         for (String command : args) {
-
             switch (command) {
 
-                case "+" -> {  // Add employee
+                case "+" -> {
                     String newEmployee = "David Green";
                     employeeList.add(newEmployee);
                     writeEmployees(employeeList);
                     System.out.println(newEmployee + " added to employee list.");
                 }
 
-                case "s" -> {  // Search employee
+                case "s" -> {
                     String searchQuery = "Alice Johnson";
-                    boolean found = employeeList.stream().anyMatch(emp -> emp.equalsIgnoreCase(searchQuery));
+                    boolean found = employeeList.stream()
+                                                .anyMatch(emp -> emp.equalsIgnoreCase(searchQuery));
                     System.out.println(found ? searchQuery + " found." : searchQuery + " not found.");
                 }
 
-                case "l" -> {  // List employees
-                    System.out.println("Employee List: " + String.join(", ", employeeList));
-                }
+                case "l" -> System.out.println("Employee List: " + String.join(", ", employeeList));
 
-                case "c" -> {  // Count employees (Task #8)
-                    System.out.println("Total employees: " + employeeList.size());
-                }
+                case "c" -> System.out.println("Total employees: " + employeeList.size());
 
-                default -> System.out.println("Command " + command + " not handled.");
+                case "?" -> System.out.println("Search help: use 's' command to search an employee");
+
+                case "u" -> System.out.println("Update operation not implemented yet");
+
+                default -> System.out.println("Unknown command: " + command);
             }
         }
     }
 
+    // ------------------------------
     // File operations
+    // ------------------------------
     public static List<String> readEmployees() {
         List<String> employees = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(Constants.EMPLOYEE_FILE))) {
