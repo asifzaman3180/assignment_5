@@ -24,21 +24,45 @@ public class EmployeeManager {
 
     public static void main(String[] args) {
 
-        // Validate arguments
+        // Validate number of arguments
         if (args.length != 1) {
-            System.out.println("Invalid number of arguments!\nUsage:");
-            System.out.println("  java EmployeeManager l          -> List all employees");
-            System.out.println("  java EmployeeManager s          -> Show random employee");
-            System.out.println("  java EmployeeManager +Name      -> Add new employee");
-            System.out.println("  java EmployeeManager ?Name      -> Search employee");
-            System.out.println("  java EmployeeManager c          -> Count employees");
-            System.out.println("  java EmployeeManager uName      -> Update employee");
-            System.out.println("  java EmployeeManager dName      -> Delete employee");
+            System.out.println("❌ Invalid number of arguments!");
+            System.out.println("Usage:");
+            System.out.println("  l          -> List all employees");
+            System.out.println("  s          -> Show random employee");
+            System.out.println("  +Name      -> Add new employee");
+            System.out.println("  ?Name      -> Search employee");
+            System.out.println("  c          -> Count employees");
+            System.out.println("  uName      -> Update employee");
+            System.out.println("  dName      -> Delete employee");
             return;
         }
 
         String arg = args[0];
 
+        // Validate argument value
+        boolean validCommand = arg.equals("l") ||
+                               arg.equals("s") ||
+                               arg.equals("c") ||
+                               arg.startsWith("+") ||
+                               arg.startsWith("?") ||
+                               arg.startsWith("u") ||
+                               arg.startsWith("d");
+
+        if (!validCommand) {
+            System.out.println("❌ Invalid or unsupported argument: " + arg);
+            System.out.println("Supported commands:");
+            System.out.println("  l          -> List all employees");
+            System.out.println("  s          -> Show random employee");
+            System.out.println("  +Name      -> Add new employee");
+            System.out.println("  ?Name      -> Search employee");
+            System.out.println("  c          -> Count employees");
+            System.out.println("  uName      -> Update employee");
+            System.out.println("  dName      -> Delete employee");
+            return;
+        }
+
+        // Process commands
         try {
             // List all employees
             if (arg.equals("l")) {
@@ -73,7 +97,7 @@ public class EmployeeManager {
                     System.out.println("❌ Employee not found: " + searchName);
             }
 
-            // Count employees (simplified)
+            // Count employees
             else if (arg.equals("c")) {
                 System.out.println(Constants.DATA_LOADING);
                 List<String> employees = readEmployeesFromFile();
@@ -109,11 +133,6 @@ public class EmployeeManager {
                 } else {
                     System.out.println("Employee not found.");
                 }
-            }
-
-            // Invalid command
-            else {
-                System.out.println("Invalid command. Please check usage.");
             }
 
         } catch (IOException e) {
