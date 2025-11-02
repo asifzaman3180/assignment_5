@@ -86,20 +86,8 @@ public class EmployeeManager {
         } else if (args[0].contains(Constants.COUNT_COMMAND)) {
             System.out.println(Constants.LOADING_DATA_MESSAGE);
             try {
-                char[] characterArray = String.join(",", readAllEmployeesFromFile()).toCharArray();
-                boolean currentlyInWord = false;
-                int wordCount = 0;
-                for (char currentCharacter : characterArray) {
-                    if (currentCharacter == ' ') {
-                        if (!currentlyInWord) {
-                            wordCount++;
-                            currentlyInWord = true;
-                        } else {
-                            currentlyInWord = false;
-                        }
-                    }
-                }
-                System.out.println(wordCount + " word(s) found " + characterArray.length);
+                String[] employeeList = readAllEmployeesFromFile();
+                System.out.println(employeeList.length + " employee(s) found");
             } catch (Exception exception) {
             }
             System.out.println(Constants.DATA_LOADED_MESSAGE);
