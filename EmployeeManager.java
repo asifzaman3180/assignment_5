@@ -30,7 +30,7 @@ public class EmployeeManager {
                 searchEmployee(command.substring(1));
             } 
             else if (command.equals("c")) {
-                countWords();
+                countEmployees();   // ✅ renamed and simplified
             } 
             else if (command.startsWith("u")) {
                 updateEmployee(command.substring(1));
@@ -73,27 +73,22 @@ public class EmployeeManager {
         for (String employee : employees) {
             if (employee.trim().equalsIgnoreCase(name)) {
                 System.out.println("Employee found: " + employee.trim());
-                return; // ✅ Early exit — no need for a flag
+                return;
             }
         }
         System.out.println("Employee not found: " + name);
     }
 
-    private static void countWords() throws IOException {
-        String content = String.join(",", readEmployees());
-        int wordCount = 0;
-        boolean inWord = false;
-        for (char ch : content.toCharArray()) {
-            if (ch == ' ') {
-                if (!inWord) {
-                    wordCount++;
-                    inWord = true;
-                } else {
-                    inWord = false;
-                }
-            }
-        }
-        System.out.println(wordCount + " word(s) found, " + content.length() + " characters total.");
+    // ✅ Simplified count method
+    private static void countEmployees() throws IOException {
+        String[] employees = readEmployees();
+        int totalEmployees = employees.length;
+
+        // Count total characters (excluding commas and spaces)
+        int totalCharacters = String.join("", employees).replace(",", "").replace(" ", "").length();
+
+        System.out.println("Total employees: " + totalEmployees);
+        System.out.println("Total characters (excluding commas/spaces): " + totalCharacters);
     }
 
     private static void updateEmployee(String nameToUpdate) throws IOException {
