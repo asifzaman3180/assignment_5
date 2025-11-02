@@ -5,6 +5,14 @@ import java.util.*;
 public class EmployeeManager {
     
     public static void main(String[] args) {
+        // Validate command-line arguments
+        if (args.length != 1) {
+            System.out.println("Error: Please provide exactly one command argument.");
+            System.out.println("Usage: java EmployeeManager <command>");
+            System.out.println("Commands: l, s, +<name>, ?<name>, c, u<name>, d<name>");
+            return;
+        }
+        
         // Check arguments
         if (args[0].equals("l")) {
             System.out.println("Loading data ...");
@@ -143,6 +151,9 @@ public class EmployeeManager {
             } catch (Exception e) {
             }
             System.out.println("Data Deleted.");
+        } else {
+            System.out.println("Error: Invalid command '" + args[0] + "'");
+            System.out.println("Valid commands: l, s, +<name>, ?<name>, c, u<name>, d<name>");
         }
     }
 }
