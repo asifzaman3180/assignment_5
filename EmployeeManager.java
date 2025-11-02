@@ -22,7 +22,7 @@ public class EmployeeManager {
         }
     }
 
-    // ✅ Append a single employee
+    // ✅ Append a new employee
     private static void appendEmployee(String employeeName) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE, true))) {
             writer.write(", " + employeeName);
@@ -31,7 +31,7 @@ public class EmployeeManager {
 
     public static void main(String[] args) {
 
-        // ✅ Validate argument count
+        // ✅ Validate arguments
         if (args.length != 1) {
             System.out.println("Usage:");
             System.out.println("  java EmployeeManager l         // List all employees");
@@ -39,26 +39,32 @@ public class EmployeeManager {
             System.out.println("  java EmployeeManager +Name     // Add a new employee");
             System.out.println("  java EmployeeManager ?Name     // Search for an employee");
             System.out.println("  java EmployeeManager c         // Count employees");
-            System.out.println("  java EmployeeManager uName     // Update employee to 'Updated'");
-            System.out.println("  java EmployeeManager dName     // Delete an employee");
+            System.out.println("  java EmployeeManager uName     // Update employee");
+            System.out.println("  java EmployeeManager dName     // Delete employee");
             return;
         }
 
-        String command = args[0];
+        String command = args[0].trim();
 
         try {
             if (command.equals("l")) { // ✅ List all employees
                 System.out.println(Constants.LOADING_MSG);
-                readEmployees().forEach(System.out::println);
+                List<String> employees = readEmployees();
+                if (employees.isEmpty()) {
+                    System.out.println("No employees found.");
+                } else {
+                    employees.forEach(System.out::println);
+                }
                 System.out.println(Constants.DATA_LOADED_MSG);
 
-            } else if (command.equals("s")) { // ✅ Show random employee
+            } else if (command.equals("s")) { // ✅ Show a random employee
                 System.out.println(Constants.LOADING_MSG);
                 List<String> employees = readEmployees();
                 if (employees.isEmpty()) {
                     System.out.println(Constants.EMPLOYEE_NOT_FOUND_MSG);
                 } else {
-                    System.out.println(employees.get(new Random().nextInt(employees.size())));
+                    String randomEmp = employees.get(new Random().nextInt(employees.size()));
+                    System.out.println("Random employee: " + randomEmp.trim());
                 }
                 System.out.println(Constants.DATA_LOADED_MSG);
 
@@ -68,16 +74,27 @@ public class EmployeeManager {
                 System.out.println("Employee added successfully.");
                 System.out.println(Constants.DATA_LOADED_MSG);
 
-            } else if (command.startsWith("?")) { // ✅ Search for employee
+            } else if (command.startsWith("?")) { // ✅ Improved Search
                 System.out.println(Constants.LOADING_MSG);
-                boolean found = readEmployees().stream()
-                        .anyMatch(emp -> emp.trim().equalsIgnoreCase(command.substring(1).trim()));
-                System.out.println(found ? Constants.EMPLOYEE_FOUND_MSG : Constants.EMPLOYEE_NOT_FOUND_MSG);
+                String searchName = command.substring(1).trim();
+                List<String> employees = readEmployees();
+
+                // Stream-based, case-insensitive search — no flag variable needed
+                boolean employeeExists = employees.stream()
+                        .map(String::trim)
+                        .anyMatch(emp -> emp.equalsIgnoreCase(searchName));
+
+                if (employeeExists) {
+                    System.out.println(Constants.EMPLOYEE_FOUND_MSG + " (" + searchName + ")");
+                } else {
+                    System.out.println(Constants.EMPLOYEE_NOT_FOUND_MSG + " (" + searchName + ")");
+                }
                 System.out.println(Constants.DATA_LOADED_MSG);
 
             } else if (command.equals("c")) { // ✅ Count employees
                 System.out.println(Constants.LOADING_MSG);
-                System.out.println(readEmployees().size() + " employee(s) found.");
+                int count = readEmployees().size();
+                System.out.println(count + " employee(s) found.");
                 System.out.println(Constants.DATA_LOADED_MSG);
 
             } else if (command.startsWith("u")) { // ✅ Update employee
@@ -88,28 +105,30 @@ public class EmployeeManager {
                 if (employees.contains(updateName)) {
                     Collections.replaceAll(employees, updateName, "Updated");
                     writeEmployees(employees);
-                    System.out.println(Constants.DATA_UPDATED_MSG);
+                    System.out.println(Constants.DATA_UPDATED_MSG + " (" + updateName + ")");
                 } else {
-                    System.out.println(Constants.EMPLOYEE_NOT_FOUND_MSG);
+                    System.out.println(Constants.EMPLOYEE_NOT_FOUND_MSG + " (" + updateName + ")");
                 }
 
             } else if (command.startsWith("d")) { // ✅ Delete employee
                 System.out.println(Constants.LOADING_MSG);
                 List<String> employees = readEmployees();
-                if (employees.remove(command.substring(1).trim())) {
+                String deleteName = command.substring(1).trim();
+
+                if (employees.removeIf(emp -> emp.trim().equalsIgnoreCase(deleteName))) {
                     writeEmployees(employees);
-                    System.out.println(Constants.DATA_DELETED_MSG);
+                    System.out.println(Constants.DATA_DELETED_MSG + " (" + deleteName + ")");
                 } else {
-                    System.out.println(Constants.EMPLOYEE_NOT_FOUND_MSG);
+                    System.out.println(Constants.EMPLOYEE_NOT_FOUND_MSG + " (" + deleteName + ")");
                 }
 
             } else {
-                System.out.println("Invalid command! Use: l, s, +Name, ?Name, c, uName, dName");
+                System.out.println("Invalid command! Please use: l, s, +Name, ?Name, c, uName, dName");
             }
 
-        } catch (IOException ex) {
-            System.out.println("An error occurred while processing the file:");
-            ex.printStackTrace();
+        } catch (IOException e) {
+            System.out.println("Error while accessing file:");
+            e.printStackTrace();
         }
     }
 }
