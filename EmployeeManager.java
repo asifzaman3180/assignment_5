@@ -5,14 +5,15 @@ public class EmployeeManager {
 
     public static void main(String[] args) {
 
-  
+        // ------------------------------
+        // Argument Validation
+        // ------------------------------
         if (args.length != 6) {
             System.out.println("Error: Invalid number of arguments!");
             System.out.println("Usage: java EmployeeManager l s + ? c u");
             return;
         }
 
-        // Task #5: Use Constants instead of string literals
         for (String command : args) {
             boolean isValidCommand = false;
             for (String valid : Constants.VALID_COMMANDS) {
@@ -23,40 +24,46 @@ public class EmployeeManager {
             }
             if (!isValidCommand) {
                 System.out.println("Error: Invalid command '" + command + "'");
-                System.out.println("Valid commands are: l, s, +, ?, c, u");
                 return;
             }
         }
 
-   
+        // ------------------------------
+        // Read employee list
+        // ------------------------------
         List<String> employeeList = readEmployees();
 
+        // ------------------------------
+        // Handle commands
+        // ------------------------------
         for (String command : args) {
+
+            // Add employee
             if (command.equals("+")) {
-                String newEmployee = "David Green"; 
+                String newEmployee = "David Green";
                 employeeList.add(newEmployee);
                 writeEmployees(employeeList);
                 System.out.println(newEmployee + " added to employee list.");
             }
 
+            // Search employee
             if (command.equals("s")) {
                 String searchQuery = "Alice Johnson";
-                boolean isFound = false;
-                for (int index = 0; index < employeeList.size(); index++) {
-                    if (employeeList.get(index).equalsIgnoreCase(searchQuery)) {
-                        isFound = true;
-                        break;
-                    }
-                }
-                System.out.println(isFound ? searchQuery + " found." : searchQuery + " not found.");
+                boolean found = employeeList.stream()
+                        .anyMatch(emp -> emp.equalsIgnoreCase(searchQuery));
+                System.out.println(found ? searchQuery + " found." : searchQuery + " not found.");
             }
 
+            // List employees
             if (command.equals("l")) {
                 System.out.println("Employee List: " + String.join(", ", employeeList));
             }
         }
     }
 
+    // ------------------------------
+    // File operations
+    // ------------------------------
     public static List<String> readEmployees() {
         List<String> employees = new ArrayList<>();
         try {
@@ -72,7 +79,6 @@ public class EmployeeManager {
         return employees;
     }
 
-    // Method to write employees to file
     public static void writeEmployees(List<String> employees) {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE));
