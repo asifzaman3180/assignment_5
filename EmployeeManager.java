@@ -35,8 +35,7 @@ public class EmployeeManager {
 
             case "SEARCH":
                 System.out.println("Loading data ...");
-                String searchName = command.substring(1).trim();
-                searchEmployee(searchName);
+                searchEmployee(command.substring(1).trim());
                 System.out.println("Data Loaded.");
                 break;
 
@@ -62,7 +61,6 @@ public class EmployeeManager {
         }
     }
 
-    // Clean control structure: helper method
     private static String getCommandType(String cmd) {
         if ("l".equals(cmd)) return "LIST";
         if ("s".equals(cmd)) return "SHOW";
@@ -74,7 +72,6 @@ public class EmployeeManager {
         return "INVALID";
     }
 
-    //  File Reading
     private static List<String> readEmployees() {
         List<String> employees = new ArrayList<>();
         File file = new File(Constants.EMPLOYEE_FILE);
@@ -90,7 +87,6 @@ public class EmployeeManager {
         return employees;
     }
 
-    //  File Writing
     private static void writeEmployees(List<String> employees) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE))) {
             writer.write(String.join(",", employees));
@@ -121,7 +117,6 @@ public class EmployeeManager {
         else System.out.println(employees.get(new Random().nextInt(employees.size())));
     }
 
-    //  Simplified Search (removed done variable)
     private static void searchEmployee(String name) {
         if (name.isEmpty()) {
             System.out.println("Invalid name to search.");
@@ -129,14 +124,27 @@ public class EmployeeManager {
         }
         List<String> employees = readEmployees();
         System.out.println(employees.contains(name)
-                ? "Employee found!"
+                ? " Employee found!"
                 : " Employee not found!");
     }
 
+    // Simplified Count Operation
     private static void countEmployees() {
         List<String> employees = readEmployees();
-        int totalChars = employees.stream().mapToInt(String::length).sum();
-        System.out.println(employees.size() + " employee(s) found; total characters: " + totalChars);
+
+        if (employees.isEmpty()) {
+            System.out.println("No employees found.");
+            return;
+        }
+
+        int totalEmployees = employees.size();
+        double averageNameLength = employees.stream()
+                .mapToInt(String::length)
+                .average()
+                .orElse(0);
+
+        System.out.printf("Total Employees: %d | Average Name Length: %.2f%n",
+                totalEmployees, averageNameLength);
     }
 
     private static void updateEmployee(String name) {
