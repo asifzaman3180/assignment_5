@@ -23,21 +23,49 @@ public class EmployeeManager {
             else if (command.equals("s")) {
                 showRandomEmployee();
             } 
+            // ✅ START: Task 9 Validation
             else if (command.startsWith("+")) {
-                addEmployee(command.substring(1));
+                String name = command.substring(1);
+                if (name.isEmpty()) {
+                    System.out.println("Error: Employee name cannot be empty for 'add' operation.");
+                    System.out.println(Constants.USAGE_INFO);
+                } else {
+                    addEmployee(name);
+                }
             } 
             else if (command.startsWith("?")) {
-                searchEmployee(command.substring(1));
+                String name = command.substring(1);
+                if (name.isEmpty()) {
+                    System.out.println("Error: Employee name cannot be empty for 'search' operation.");
+                    System.out.println(Constants.USAGE_INFO);
+                } else {
+                    searchEmployee(name);
+                }
             } 
+            // ✅ END: Task 9 Validation
             else if (command.equals("c")) {
-                countEmployees();   // ✅ renamed and simplified
+                countEmployees();
             } 
+            // ✅ START: Task 9 Validation
             else if (command.startsWith("u")) {
-                updateEmployee(command.substring(1));
+                String name = command.substring(1);
+                if (name.isEmpty()) {
+                    System.out.println("Error: Employee name cannot be empty for 'update' operation.");
+                    System.out.println(Constants.USAGE_INFO);
+                } else {
+                    updateEmployee(name);
+                }
             } 
             else if (command.startsWith("d")) {
-                deleteEmployee(command.substring(1));
+                String name = command.substring(1);
+                if (name.isEmpty()) {
+                    System.out.println("Error: Employee name cannot be empty for 'delete' operation.");
+                    System.out.println(Constants.USAGE_INFO);
+                } else {
+                    deleteEmployee(name);
+                }
             } 
+            // ✅ END: Task 9 Validation
             else {
                 System.out.println("Error: Unknown command.");
                 System.out.println(Constants.USAGE_INFO);
@@ -96,7 +124,7 @@ public class EmployeeManager {
         boolean updated = false;
         for (int i = 0; i < employees.length; i++) {
             if (employees[i].trim().equalsIgnoreCase(nameToUpdate)) {
-                employees[i] = "Updated";
+                employees[i] = "Updated"; // Note: This is a placeholder update logic
                 updated = true;
                 break;
             }
