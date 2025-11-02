@@ -7,9 +7,10 @@ public class EmployeeManager {
 
     private static List<String> readEmployeesFromFile() throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
-            String fileContent = reader.readLine();
-            if (fileContent == null || fileContent.trim().isEmpty()) return new ArrayList<>();
-            return Arrays.asList(fileContent.split(",\\s*"));
+            String data = reader.readLine();
+            return (data == null || data.isEmpty())
+                    ? new ArrayList<>()
+                    : new ArrayList<>(Arrays.asList(data.split(",\\s*")));
         }
     }
 
@@ -21,8 +22,7 @@ public class EmployeeManager {
 
     public static void main(String[] args) {
         if (args.length != 1) {
-            System.out.println("Invalid number of arguments!");
-            System.out.println("Usage:");
+            System.out.println("Invalid number of arguments!\nUsage:");
             System.out.println("  java EmployeeManager l          -> List all employees");
             System.out.println("  java EmployeeManager s          -> Show random employee");
             System.out.println("  java EmployeeManager +Name      -> Add new employee");
@@ -33,9 +33,9 @@ public class EmployeeManager {
             return;
         }
 
-        try {
-            String arg = args[0];
+        String arg = args[0];
 
+        try {
             if (arg.equals("l")) {
                 System.out.println(Constants.DATA_LOADING);
                 readEmployeesFromFile().forEach(System.out::println);
@@ -50,17 +50,19 @@ public class EmployeeManager {
 
             else if (arg.startsWith("+")) {
                 List<String> employees = new ArrayList<>(readEmployeesFromFile());
-                employees.add(arg.substring(1).trim());
+                String newName = arg.substring(1).trim();
+                employees.add(newName);
                 writeEmployeesToFile(employees);
-                System.out.println("Employee added: " + arg.substring(1).trim());
+                System.out.println("✅ Employee added: " + newName);
             }
 
             else if (arg.startsWith("?")) {
+                List<String> employees = readEmployeesFromFile();
                 String searchName = arg.substring(1).trim();
-                if (readEmployeesFromFile().contains(searchName))
-                    System.out.println("Employee found: " + searchName);
+                if (employees.contains(searchName))
+                    System.out.println("✅ Employee found: " + searchName);
                 else
-                    System.out.println("Employee not found.");
+                    System.out.println("❌ Employee not found: " + searchName);
             }
 
             else if (arg.equals("c")) {
@@ -70,8 +72,9 @@ public class EmployeeManager {
             else if (arg.startsWith("u")) {
                 List<String> employees = new ArrayList<>(readEmployeesFromFile());
                 String nameToUpdate = arg.substring(1).trim();
-                if (employees.contains(nameToUpdate)) {
-                    employees.set(employees.indexOf(nameToUpdate), "Updated");
+                int index = employees.indexOf(nameToUpdate);
+                if (index != -1) {
+                    employees.set(index, "Updated");
                     writeEmployeesToFile(employees);
                     System.out.println(Constants.DATA_UPDATED);
                 } else {
@@ -94,8 +97,8 @@ public class EmployeeManager {
                 System.out.println("Invalid command. Please check usage.");
             }
 
-        } catch (IOException ex) {
-            System.out.println("Error accessing file: " + ex.getMessage());
+        } catch (IOException e) {
+            System.out.println("File error: " + e.getMessage());
         }
     }
 }
