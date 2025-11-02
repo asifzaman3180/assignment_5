@@ -6,6 +6,21 @@ public class EmployeeManager {
 
     public static void main(String[] args) {
 
+        // 🔹 Task #2: Validate command-line arguments
+        if (args.length != 1) {
+            System.out.println("Error: Invalid number of arguments.");
+            System.out.println("Usage: java EmployeeManager [command]");
+            System.out.println("Commands:");
+            System.out.println("  l   -> List all employees");
+            System.out.println("  s   -> Show random employee");
+            System.out.println("  +X  -> Add employee named X");
+            System.out.println("  ?X  -> Search for employee X");
+            System.out.println("  c   -> Count words in file");
+            System.out.println("  uX  -> Update employee X");
+            System.out.println("  dX  -> Delete employee X");
+            return; // Stop program execution
+        }
+
         // Check arguments
         if (args[0].equals("l")) {
             System.out.println("Loading data ...");
