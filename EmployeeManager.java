@@ -22,23 +22,20 @@ public class EmployeeManager {
             String[] employeeList = readEmployees();
             if (employeeList != null) {
                 System.out.println(String.join(", ", employeeList));
-                Random random = new Random();
-                int randomIndex = random.nextInt(employeeList.length);
-                System.out.println(employeeList[randomIndex]);
+                System.out.println(employeeList[new Random().nextInt(employeeList.length)]);
             }
             System.out.println("Data Loaded.");
         } 
         else if (command.startsWith("+")) {
             System.out.println("Loading data ...");
-            String newEmployee = command.substring(1);
-            appendEmployee(newEmployee);
+            appendEmployee(command.substring(1));
             System.out.println("Data Loaded.");
         } 
         else if (command.startsWith("?")) {
             System.out.println("Loading data ...");
+            boolean found = false;
             String searchEmployee = command.substring(1);
             String[] employeeList = readEmployees();
-            boolean found = false;
             if (employeeList != null) {
                 for (String employee : employeeList) {
                     if (employee.equals(searchEmployee)) {
@@ -57,11 +54,9 @@ public class EmployeeManager {
             System.out.println("Loading data ...");
             String[] employeeList = readEmployees();
             if (employeeList != null) {
-                String allEmployees = String.join(" ", employeeList);
-                char[] characters = allEmployees.toCharArray();
                 int wordCount = 0;
                 boolean inWord = false;
-                for (char character : characters) {
+                for (char character : String.join(" ", employeeList).toCharArray()) {
                     if (character == ' ') {
                         if (!inWord) {
                             wordCount++;
@@ -71,7 +66,7 @@ public class EmployeeManager {
                         }
                     }
                 }
-                System.out.println(wordCount + " word(s) found, total characters: " + characters.length);
+                System.out.println(wordCount + " word(s) found, total characters: " + String.join(" ", employeeList).length());
             }
             System.out.println("Data Loaded.");
         } 
@@ -91,11 +86,10 @@ public class EmployeeManager {
         } 
         else if (command.startsWith("d")) {
             System.out.println("Loading data ...");
-            String employeeToDelete = command.substring(1);
             String[] employeeList = readEmployees();
             if (employeeList != null) {
                 List<String> employeeArrayList = new ArrayList<>(Arrays.asList(employeeList));
-                employeeArrayList.remove(employeeToDelete);
+                employeeArrayList.remove(command.substring(1));
                 writeEmployees(employeeArrayList.toArray(new String[0]));
             }
             System.out.println("Data Deleted.");
@@ -109,9 +103,7 @@ public class EmployeeManager {
     private static String[] readEmployees() {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(Constants.EMPLOYEE_FILE)))) {
             String line = reader.readLine();
-            if (line != null && !line.isEmpty()) {
-                return line.split(",");
-            }
+            return (line != null && !line.isEmpty()) ? line.split(",") : null;
         } catch (Exception exception) {
             exception.printStackTrace();
         }
