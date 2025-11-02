@@ -10,49 +10,78 @@ public class EmployeeManager {
             return;
         }
 
-        // সরাসরি args[0] ব্যবহার করব
-        if ("l".equals(args[0])) {
-            System.out.println("Loading data ...");
-            listEmployees();
-            System.out.println("Data Loaded.");
-        } else if ("s".equals(args[0])) {
-            System.out.println("Loading data ...");
-            showRandomEmployee();
-            System.out.println("Data Loaded.");
-        } else if (args[0].startsWith("+")) {
-            System.out.println("Loading data ...");
-            String nameToAdd = args[0].substring(1).trim();
-            if (!nameToAdd.isEmpty()) appendEmployee(nameToAdd);
-            else System.out.println("Invalid name to add.");
-            System.out.println("Data Loaded.");
-        } else if (args[0].startsWith("?")) {
-            System.out.println("Loading data ...");
-            searchEmployee(args[0].substring(1).trim());
-            System.out.println("Data Loaded.");
-        } else if ("c".equals(args[0])) {
-            System.out.println("Loading data ...");
-            countEmployees();
-            System.out.println("Data Loaded.");
-        } else if (args[0].startsWith("u")) {
-            System.out.println("Loading data ...");
-            updateEmployee(args[0].substring(1).trim());
-        } else if (args[0].startsWith("d")) {
-            System.out.println("Loading data ...");
-            deleteEmployee(args[0].substring(1).trim());
-        } else {
-            System.out.println("Invalid command: " + args[0]);
-            System.out.println(Constants.USAGE_MESSAGE);
+        String command = args[0];
+
+        switch (getCommandType(command)) {
+            case "LIST":
+                System.out.println("Loading data ...");
+                listEmployees();
+                System.out.println("Data Loaded.");
+                break;
+
+            case "SHOW":
+                System.out.println("Loading data ...");
+                showRandomEmployee();
+                System.out.println("Data Loaded.");
+                break;
+
+            case "ADD":
+                System.out.println("Loading data ...");
+                String nameToAdd = command.substring(1).trim();
+                if (!nameToAdd.isEmpty()) appendEmployee(nameToAdd);
+                else System.out.println("Invalid name to add.");
+                System.out.println("Data Loaded.");
+                break;
+
+            case "SEARCH":
+                System.out.println("Loading data ...");
+                String searchName = command.substring(1).trim();
+                searchEmployee(searchName);
+                System.out.println("Data Loaded.");
+                break;
+
+            case "COUNT":
+                System.out.println("Loading data ...");
+                countEmployees();
+                System.out.println("Data Loaded.");
+                break;
+
+            case "UPDATE":
+                System.out.println("Loading data ...");
+                updateEmployee(command.substring(1).trim());
+                break;
+
+            case "DELETE":
+                System.out.println("Loading data ...");
+                deleteEmployee(command.substring(1).trim());
+                break;
+
+            default:
+                System.out.println("Invalid command: " + command);
+                System.out.println(Constants.USAGE_MESSAGE);
         }
     }
 
-    // Read employees (no unnecessary vars)
+    // Clean control structure: helper method
+    private static String getCommandType(String cmd) {
+        if ("l".equals(cmd)) return "LIST";
+        if ("s".equals(cmd)) return "SHOW";
+        if (cmd.startsWith("+")) return "ADD";
+        if (cmd.startsWith("?")) return "SEARCH";
+        if ("c".equals(cmd)) return "COUNT";
+        if (cmd.startsWith("u")) return "UPDATE";
+        if (cmd.startsWith("d")) return "DELETE";
+        return "INVALID";
+    }
+
+    //  File Reading
     private static List<String> readEmployees() {
         List<String> employees = new ArrayList<>();
         File file = new File(Constants.EMPLOYEE_FILE);
         if (!file.exists()) return employees;
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            if ((line = reader.readLine()) != null && !line.trim().isEmpty()) {
+            String line = reader.readLine();
+            if (line != null && !line.trim().isEmpty()) {
                 for (String p : line.split(",")) employees.add(p.trim());
             }
         } catch (IOException ioe) {
@@ -61,7 +90,7 @@ public class EmployeeManager {
         return employees;
     }
 
-    // Write employees list (no redundant vars)
+    // File Writing
     private static void writeEmployees(List<String> employees) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE))) {
             writer.write(String.join(",", employees));
@@ -70,7 +99,6 @@ public class EmployeeManager {
         }
     }
 
-    // Append employee
     private static void appendEmployee(String name) {
         File file = new File(Constants.EMPLOYEE_FILE);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
@@ -93,12 +121,16 @@ public class EmployeeManager {
         else System.out.println(employees.get(new Random().nextInt(employees.size())));
     }
 
+    //  Simplified Search (removed done variable)
     private static void searchEmployee(String name) {
         if (name.isEmpty()) {
             System.out.println("Invalid name to search.");
             return;
         }
-        System.out.println(readEmployees().contains(name) ? "Employee found!" : "Employee NOT found.");
+        List<String> employees = readEmployees();
+        System.out.println(employees.contains(name)
+                ? " Employee found!"
+                : " Employee not found!");
     }
 
     private static void countEmployees() {
