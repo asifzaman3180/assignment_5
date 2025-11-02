@@ -1,160 +1,189 @@
 // File Name: EmployeeManager.java
+// Description: A simple employee manager that can load, search, add, update, delete, 
+// and count employees from a text file.
+
 import java.io.*;
 import java.util.*;
 
 public class EmployeeManager {
+
+    // File where employee data is stored
+    private static final String EMPLOYEE_FILE = "employees.txt";
+
     public static void main(String[] args) {
-    
+
         if (args.length == 0) {
-            System.out.println("Error: No argument provided.");
-            System.out.println("Usage:");
-            System.out.println(" l            - List all employees");
-            System.out.println(" s            - Show a random employee");
-            System.out.println(" +<name>      - Add a new employee");
-            System.out.println(" ?<name>      - Search for an employee");
-            System.out.println(" c            - Count words in file");
-            System.out.println(" u<name>      - Update an employee");
-            System.out.println(" d<name>      - Delete an employee");
+            System.out.println("Please provide a valid command.");
             return;
         }
 
         String command = args[0];
-        try {
-            if (command.equals("l")) {
-                listEmployees();
-            } else if (command.equals("s")) {
-                showRandomEmployee();
-            } else if (command.startsWith("+")) {
-                addEmployee(command.substring(1));
-            } else if (command.startsWith("?")) {
-                searchEmployee(command.substring(1));
-            } else if (command.equals("c")) {
-                countWordsInFile();
-            } else if (command.startsWith("u")) {
-                updateEmployee(command.substring(1));
-            } else if (command.startsWith("d")) {
-                deleteEmployee(command.substring(1));
-            } else {
-                System.out.println("Error: Invalid argument '" + command + "'");
+
+        // Load and display all employees
+        if (command.equals("l")) {
+            loadAllEmployees();
+        }
+        // Load a random employee from the list
+        else if (command.equals("s")) {
+            displayRandomEmployee();
+        }
+        // Add a new employee
+        else if (command.startsWith("+")) {
+            String newEmployee = command.substring(1);
+            addEmployee(newEmployee);
+        }
+        // Search for a specific employee
+        else if (command.startsWith("?")) {
+            String searchEmployee = command.substring(1);
+            searchEmployee(searchEmployee);
+        }
+        // Count words/characters in the file
+        else if (command.equals("c")) {
+            countWordsAndChars();
+        }
+        // Update an existing employee
+        else if (command.startsWith("u")) {
+            String employeeToUpdate = command.substring(1);
+            updateEmployee(employeeToUpdate);
+        }
+        // Delete an employee
+        else if (command.startsWith("d")) {
+            String employeeToDelete = command.substring(1);
+            deleteEmployee(employeeToDelete);
+        }
+        else {
+            System.out.println("Invalid command.");
+        }
+    }
+
+    //  Methods
+
+    // Load and print all employees
+    private static void loadAllEmployees() {
+        System.out.println("Loading employee data...");
+        try (BufferedReader reader = new BufferedReader(new FileReader(EMPLOYEE_FILE))) {
+            String line = reader.readLine();
+            if (line != null) {
+                String[] employees = line.split(",");
+                for (String emp : employees) {
+                    System.out.println(emp.trim());
+                }
             }
         } catch (IOException e) {
-            System.out.println("File Error: " + e.getMessage());
-        } catch (Exception e) {
-            System.out.println("Unexpected Error: " + e.getMessage());
+            System.out.println("Error loading data: " + e.getMessage());
         }
+        System.out.println("Data loaded successfully.\n");
     }
 
-    private static void listEmployees() throws IOException {
-        System.out.println("Loading data ...");
-        List<String> employees = readEmployees();
-        if (employees.isEmpty()) {
-            System.out.println("No employees found.");
-        } else {
-            for (String emp : employees) {
-                System.out.println(emp);
+    // Display a random employee
+    private static void displayRandomEmployee() {
+        System.out.println("Loading employee data...");
+        try (BufferedReader reader = new BufferedReader(new FileReader(EMPLOYEE_FILE))) {
+            String line = reader.readLine();
+            if (line != null) {
+                String[] employees = line.split(",");
+                Random rand = new Random();
+                int randomIndex = rand.nextInt(employees.length);
+                System.out.println("Random employee: " + employees[randomIndex].trim());
             }
+        } catch (IOException e) {
+            System.out.println("Error reading data: " + e.getMessage());
         }
-        System.out.println("Data Loaded.");
+        System.out.println("Operation completed.\n");
     }
 
-    private static void showRandomEmployee() throws IOException {
-        System.out.println("Loading data ...");
-        List<String> employees = readEmployees();
-        if (employees.isEmpty()) {
-            System.out.println("No employees found.");
-        } else {
-            Random rand = new Random();
-            int idx = rand.nextInt(employees.size());
-            System.out.println("Random Employee: " + employees.get(idx));
+    // Add a new employee
+    private static void addEmployee(String newEmployee) {
+        System.out.println("Adding new employee...");
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(EMPLOYEE_FILE, true))) {
+            writer.write(", " + newEmployee.trim());
+        } catch (IOException e) {
+            System.out.println("Error adding employee: " + e.getMessage());
         }
-        System.out.println("Data Loaded.");
+        System.out.println("Employee added successfully.\n");
     }
 
-    private static void addEmployee(String name) throws IOException {
-        if (name.isEmpty()) {
-            System.out.println("Error: Employee name cannot be empty.");
-            return;
-        }
-        System.out.println("Adding employee ...");
-        BufferedWriter writer = new BufferedWriter(new FileWriter("employees.txt", true));
-        List<String> employees = readEmployees();
-        if (!employees.isEmpty()) writer.write(", ");
-        writer.write(name);
-        writer.close();
-        System.out.println("Employee Added: " + name);
-    }
-
-    private static void searchEmployee(String name) throws IOException {
-        System.out.println("Searching employee ...");
-        List<String> employees = readEmployees();
-        if (employees.contains(name)) {
-            System.out.println("Employee found: " + name);
-        } else {
-            System.out.println("Employee not found: " + name);
-        }
-        System.out.println("Data Loaded.");
-    }
-
-    private static void countWordsInFile() throws IOException {
-        System.out.println("Counting words ...");
-        String content = readFileContent();
-        if (content.isEmpty()) {
-            System.out.println("File is empty.");
-            return;
-        }
-        String[] words = content.split("\\s+|,\\s*");
-        System.out.println(words.length + " word(s) found in the file.");
-    }
-
-    private static void updateEmployee(String name) throws IOException {
-        System.out.println("Updating employee ...");
-        List<String> employees = readEmployees();
+    // Search for an employee
+    private static void searchEmployee(String employeeName) {
+        System.out.println("Searching employee...");
         boolean found = false;
-        for (int i = 0; i < employees.size(); i++) {
-            if (employees.get(i).equals(name)) {
-                employees.set(i, "Updated");
-                found = true;
+        try (BufferedReader reader = new BufferedReader(new FileReader(EMPLOYEE_FILE))) {
+            String line = reader.readLine();
+            if (line != null) {
+                String[] employees = line.split(",");
+                for (String emp : employees) {
+                    if (emp.trim().equals(employeeName)) {
+                        found = true;
+                        break;
+                    }
+                }
             }
+        } catch (IOException e) {
+            System.out.println("Error searching employee: " + e.getMessage());
         }
+
         if (found) {
-            writeEmployees(employees);
-            System.out.println("Employee Updated: " + name);
+            System.out.println("Employee found: " + employeeName);
         } else {
-            System.out.println("Employee not found: " + name);
+            System.out.println("Employee not found: " + employeeName);
         }
+        System.out.println("Search completed.\n");
     }
 
-    private static void deleteEmployee(String name) throws IOException {
-        System.out.println("Deleting employee ...");
-        List<String> employees = readEmployees();
-        if (employees.remove(name)) {
-            writeEmployees(employees);
-            System.out.println("Employee Deleted: " + name);
-        } else {
-            System.out.println("Employee not found: " + name);
+    // Count words and characters in the employee file
+    private static void countWordsAndChars() {
+        System.out.println("Counting words and characters...");
+        try (BufferedReader reader = new BufferedReader(new FileReader(EMPLOYEE_FILE))) {
+            String line = reader.readLine();
+            if (line != null) {
+                String[] words = line.split(",");
+                int charCount = line.length();
+                System.out.println("Word count: " + words.length);
+                System.out.println("Character count: " + charCount);
+            }
+        } catch (IOException e) {
+            System.out.println("Error counting words/chars: " + e.getMessage());
         }
+        System.out.println("Counting completed.\n");
     }
 
-    // Helper methods
-    private static List<String> readEmployees() throws IOException {
-        String content = readFileContent();
-        if (content.isEmpty()) return new ArrayList<>();
-        String[] arr = content.split("\\s*,\\s*");
-        return new ArrayList<>(Arrays.asList(arr));
+    // Update an employee name to "Updated"
+    private static void updateEmployee(String employeeName) {
+        System.out.println("Updating employee...");
+        try (BufferedReader reader = new BufferedReader(new FileReader(EMPLOYEE_FILE))) {
+            String line = reader.readLine();
+            if (line != null) {
+                String[] employees = line.split(",");
+                for (int i = 0; i < employees.length; i++) {
+                    if (employees[i].trim().equals(employeeName)) {
+                        employees[i] = "Updated";
+                    }
+                }
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(EMPLOYEE_FILE))) {
+                    writer.write(String.join(",", employees));
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error updating employee: " + e.getMessage());
+        }
+        System.out.println("Employee updated successfully.\n");
     }
 
-    private static void writeEmployees(List<String> employees) throws IOException {
-        BufferedWriter writer = new BuredWriter(new FileWriter("employees.txt"));
-        writer.write(String.join(", ", employees));
-        writer.close();
-    }
-
-    private static String readFileContent() throws IOException {
-        File file = new File("employees.txt");
-        if (!file.exists()) return "";
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        String line = reader.readLine();
-        reader.close();
-        return line != null ? line.trim() : "";
+    // Delete an employee from the file
+    private static void deleteEmployee(String employeeName) {
+        System.out.println("Deleting employee...");
+        try (BufferedReader reader = new BufferedReader(new FileReader(EMPLOYEE_FILE))) {
+            String line = reader.readLine();
+            if (line != null) {
+                List<String> employeeList = new ArrayList<>(Arrays.asList(line.split(",")));
+                employeeList.removeIf(emp -> emp.trim().equals(employeeName));
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(EMPLOYEE_FILE))) {
+                    writer.write(String.join(",", employeeList));
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error deleting employee: " + e.getMessage());
+        }
+        System.out.println("Employee deleted successfully.\n");
     }
 }
