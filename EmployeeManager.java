@@ -124,12 +124,12 @@ public class EmployeeManager {
         }
     }
 
-    //Helper Methods
+    // =================== Helper Methods ===================
 
     private static List<String> readEmployees() throws IOException {
         BufferedReader reader = new BufferedReader(
             new InputStreamReader(
-                new FileInputStream("employees.txt")
+                new FileInputStream(Constants.EMPLOYEE_FILE)
             )
         );
         String line = reader.readLine();
@@ -147,7 +147,7 @@ public class EmployeeManager {
 
     private static void writeEmployees(List<String> employees) throws IOException {
         BufferedWriter writer = new BufferedWriter(
-            new FileWriter("employees.txt")
+            new FileWriter(Constants.EMPLOYEE_FILE)
         );
         writer.write(String.join(", ", employees));
         writer.close();
@@ -155,7 +155,7 @@ public class EmployeeManager {
 
     private static void appendEmployee(String newEmployee) throws IOException {
         BufferedWriter writer = new BufferedWriter(
-            new FileWriter("employees.txt", true)
+            new FileWriter(Constants.EMPLOYEE_FILE, true)
         );
         writer.write(", " + newEmployee);
         writer.close();
