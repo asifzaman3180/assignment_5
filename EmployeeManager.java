@@ -7,6 +7,17 @@ public class EmployeeManager
     public static void main(String[] args)
     {
         // Check arguments
+        if(args.length != 1)
+        {
+            System.out.println("Usage:");
+            System.out.println("  java EmployeeManager l          -> List all employees");
+            System.out.println("  java EmployeeManager s          -> Show random employee");
+            System.out.println("  java EmployeeManager +      -> Add new employee");
+            System.out.println("  java EmployeeManager ?      -> Search employee");
+            System.out.println("  java EmployeeManager c          -> Count employees");
+            System.out.println("  java EmployeeManager u      -> Update employee");
+            return;
+        } 
         if (args[0].equals("l"))
         {
             System.out.println("Loading data ...");
