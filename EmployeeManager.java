@@ -12,7 +12,7 @@ public class EmployeeManager {
         }
 
         if (args[0].equals("l")) {
-            System.out.println("Loading data ...");
+            System.out.println(Constants.LOADING_MSG);
             String line = readFile();
             if (line != null) {
                 String employee[] = line.split(",");
@@ -20,10 +20,10 @@ public class EmployeeManager {
                     System.out.println(emp);
                 }
             }  
-            System.out.println("Data Loaded.");
+            System.out.println(Constants.DATA_LOADED_MSG);
         }
          else if (args[0].equals("s")) {
-            System.out.println("Loading data ...");
+            System.out.println(Constants.LOADING_MSG);
 
             String line = readFile();
             if (line != null) {
@@ -33,16 +33,16 @@ public class EmployeeManager {
                 int idx = rand.nextInt(employee.length);
                 System.out.println(employee[idx]);
             }
-            System.out.println("Data Loaded.");
+            System.out.println(Constants.DATA_LOADED_MSG);
         } 
         else if (args[0].contains("+")) {
-            System.out.println("Loading data ...");
+            System.out.println(Constants.LOADING_MSG);
             String n = args[0].substring(1);
             appendFile(", " + n);
-            System.out.println("Data Loaded.");
+            System.out.println(Constants.DATA_LOADED_MSG);
         } 
         else if (args[0].contains("?")) {
-            System.out.println("Loading data ...");
+            System.out.println(Constants.LOADING_MSG);
             String line = readFile();
             if (line != null) {
                 String employee[] = line.split(",");
@@ -56,10 +56,10 @@ public class EmployeeManager {
                 }
             } 
             
-            System.out.println("Data Loaded.");
+            System.out.println(Constants.DATA_LOADED_MSG);
         } 
        else if (args[0].contains("c")) {
-            System.out.println("Loading data ...");
+            System.out.println(Constants.LOADING_MSG);
             String line = readFile();
             if (line != null) {
                 char[] chars = line.toCharArray();
@@ -77,10 +77,10 @@ public class EmployeeManager {
                 }
                 System.out.println(count + " word(s) found " + chars.length);
             }
-            System.out.println("Data Loaded.");
+            System.out.println(Constants.DATA_LOADED_MSG);
         } 
         else if (args[0].contains("u")) {
-            System.out.println("Loading data ...");
+            System.out.println(Constants.LOADING_MSG);
             String line = readFile();
             if (line != null) {
                 String employee[] = line.split(",");
@@ -95,7 +95,7 @@ public class EmployeeManager {
             System.out.println("Data Updated.");
         } 
         else if (args[0].contains("d")) {
-            System.out.println("Loading data ...");
+            System.out.println(Constants.LOADING_MSG);
             String line = readFile();
             if (line != null) {
                 String employee[] = line.split(",");
@@ -112,7 +112,7 @@ public class EmployeeManager {
         try {
             BufferedReader read = new BufferedReader(
                     new InputStreamReader(
-                            new FileInputStream("employees.txt")));
+                            new FileInputStream(Constants.EMPLOYEE_FILE)));
             return read.readLine();
         } catch (Exception e) {
             return null;
@@ -122,7 +122,7 @@ public class EmployeeManager {
     private static void writeFile(String content) {
         try {
             BufferedWriter writer = new BufferedWriter(
-                    new FileWriter("employees.txt"));
+                    new FileWriter(Constants.EMPLOYEE_FILE));
             writer.write(content);
             writer.close();
         } catch (Exception e) {}
@@ -131,7 +131,7 @@ public class EmployeeManager {
     private static void appendFile(String content) {
         try {
             BufferedWriter writer = new BufferedWriter(
-                    new FileWriter("employees.txt", true));
+                    new FileWriter(Constants.EMPLOYEE_FILE, true));
             writer.write(content);
             writer.close();
         } catch (Exception e) {}
