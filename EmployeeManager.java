@@ -65,11 +65,20 @@ public class EmployeeManager {
                 System.out.println("Data Loaded.");
                 break;
 
-            case 'c': 
+            case 'c':
                 String[] employeesForCount = readEmployees();
-                long count = Arrays.stream(employeesForCount).filter(s -> !s.isBlank()).count();
-                int chars = Arrays.stream(employeesForCount).mapToInt(String::length).sum();
-                System.out.println(count + " employee(s) found, total characters: " + chars);
+                int count = 0;
+                int totalChars = 0;
+
+                for (String name : employeesForCount) {
+                    if (!name.trim().isEmpty()) {
+                        count++;
+                        totalChars += name.length();
+                    }
+                }
+
+                System.out.println(count + " employee(s) found.");
+                System.out.println("Total characters in all names: " + totalChars);
                 System.out.println("Data Loaded.");
                 break;
 
