@@ -4,15 +4,20 @@ import java.util.*;
 public class EmployeeManager {
 
     public static void main(String[] args) {
+        // Argument validation
         if (args == null || args.length != 1) {
             System.out.println("Invalid number of arguments!");
             System.out.println(Constants.USAGE_MESSAGE);
             return;
         }
 
-        String command = args[0];
+        String rawCommand = args[0];
 
-        switch (getCommandType(command)) {
+        // Determine command type and parameter (if any)
+        String cmdType = getCommandType(rawCommand);
+        String parameter = getParameter(rawCommand);
+
+        switch (cmdType) {
             case "LIST":
                 System.out.println("Loading data ...");
                 listEmployees();
@@ -26,17 +31,26 @@ public class EmployeeManager {
                 break;
 
             case "ADD":
-                System.out.println("Loading data ...");
-                String nameToAdd = command.substring(1).trim();
-                if (!nameToAdd.isEmpty()) appendEmployee(nameToAdd);
-                else System.out.println("Invalid name to add.");
-                System.out.println("Data Loaded.");
+                // Validate parameter for add
+                if (!isValidName(parameter)) {
+                    System.out.println("Error: missing or invalid name for add (+Name).");
+                    System.out.println("Example: java EmployeeManager +John_Doe");
+                } else {
+                    System.out.println("Loading data ...");
+                    appendEmployee(parameter);
+                    System.out.println("Data Loaded.");
+                }
                 break;
 
             case "SEARCH":
-                System.out.println("Loading data ...");
-                searchEmployee(command.substring(1).trim());
-                System.out.println("Data Loaded.");
+                if (!isValidName(parameter)) {
+                    System.out.println("Error: missing or invalid name for search (?Name).");
+                    System.out.println("Example: java EmployeeManager ?John_Doe");
+                } else {
+                    System.out.println("Loading data ...");
+                    searchEmployee(parameter);
+                    System.out.println("Data Loaded.");
+                }
                 break;
 
             case "COUNT":
@@ -46,22 +60,34 @@ public class EmployeeManager {
                 break;
 
             case "UPDATE":
-                System.out.println("Loading data ...");
-                updateEmployee(command.substring(1).trim());
+                if (!isValidName(parameter)) {
+                    System.out.println("Error: missing or invalid name for update (uName).");
+                    System.out.println("Example: java EmployeeManager uJohn_Doe");
+                } else {
+                    System.out.println("Loading data ...");
+                    updateEmployee(parameter);
+                }
                 break;
 
             case "DELETE":
-                System.out.println("Loading data ...");
-                deleteEmployee(command.substring(1).trim());
+                if (!isValidName(parameter)) {
+                    System.out.println("Error: missing or invalid name for delete (dName).");
+                    System.out.println("Example: java EmployeeManager dJohn_Doe");
+                } else {
+                    System.out.println("Loading data ...");
+                    deleteEmployee(parameter);
+                }
                 break;
 
             default:
-                System.out.println("Invalid command: " + command);
+                System.out.println("Invalid command: " + rawCommand);
                 System.out.println(Constants.USAGE_MESSAGE);
         }
     }
 
+    // Return command type string based on raw input
     private static String getCommandType(String cmd) {
+        if (cmd == null || cmd.isEmpty()) return "INVALID";
         if ("l".equals(cmd)) return "LIST";
         if ("s".equals(cmd)) return "SHOW";
         if (cmd.startsWith("+")) return "ADD";
@@ -71,6 +97,25 @@ public class EmployeeManager {
         if (cmd.startsWith("d")) return "DELETE";
         return "INVALID";
     }
+
+    // Extract parameter (part after prefix), trimmed; returns empty string if none
+    private static String getParameter(String raw) {
+        if (raw == null || raw.length() == 0) return "";
+        if (raw.startsWith("+") || raw.startsWith("?")) {
+            return raw.length() > 1 ? raw.substring(1).trim() : "";
+        }
+        if (raw.startsWith("u") || raw.startsWith("d")) {
+            return raw.length() > 1 ? raw.substring(1).trim() : "";
+        }
+        return "";
+    }
+
+    // Basic validation for a name parameter (non-empty, not just spaces)
+    private static boolean isValidName(String name) {
+        return name != null && !name.trim().isEmpty();
+    }
+
+    // ---------------- File I/O helpers ----------------
 
     private static List<String> readEmployees() {
         List<String> employees = new ArrayList<>();
@@ -105,6 +150,8 @@ public class EmployeeManager {
         }
     }
 
+    // ---------------- Command handlers ----------------
+
     private static void listEmployees() {
         List<String> employees = readEmployees();
         if (employees.isEmpty()) System.out.println("(No employees found)");
@@ -118,40 +165,22 @@ public class EmployeeManager {
     }
 
     private static void searchEmployee(String name) {
-        if (name.isEmpty()) {
-            System.out.println("Invalid name to search.");
-            return;
-        }
         List<String> employees = readEmployees();
-        System.out.println(employees.contains(name)
-                ? " Employee found!"
-                : "Employee not found!");
+        System.out.println(employees.contains(name) ? "Employee found!" : "Employee NOT found.");
     }
 
-    // Simplified Count Operation
     private static void countEmployees() {
         List<String> employees = readEmployees();
-
         if (employees.isEmpty()) {
             System.out.println("No employees found.");
             return;
         }
-
         int totalEmployees = employees.size();
-        double averageNameLength = employees.stream()
-                .mapToInt(String::length)
-                .average()
-                .orElse(0);
-
-        System.out.printf("Total Employees: %d | Average Name Length: %.2f%n",
-                totalEmployees, averageNameLength);
+        double averageNameLength = employees.stream().mapToInt(String::length).average().orElse(0);
+        System.out.printf("Total Employees: %d | Average Name Length: %.2f%n", totalEmployees, averageNameLength);
     }
 
     private static void updateEmployee(String name) {
-        if (name.isEmpty()) {
-            System.out.println("Invalid name to update.");
-            return;
-        }
         List<String> employees = readEmployees();
         boolean updated = false;
         for (int i = 0; i < employees.size(); i++) {
@@ -169,12 +198,9 @@ public class EmployeeManager {
     }
 
     private static void deleteEmployee(String name) {
-        if (name.isEmpty()) {
-            System.out.println("Invalid name to delete.");
-            return;
-        }
         List<String> employees = readEmployees();
-        if (employees.removeIf(e -> e.equals(name))) {
+        boolean removed = employees.removeIf(e -> e.equals(name));
+        if (removed) {
             writeEmployees(employees);
             System.out.println("Data Deleted.");
         } else {
@@ -182,4 +208,5 @@ public class EmployeeManager {
         }
     }
 }
+
 
