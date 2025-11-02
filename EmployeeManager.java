@@ -4,11 +4,11 @@ import java.util.*;
 public class EmployeeManager {
 
 
-// Read all employees from file
-private static List<String> readEmployees() throws IOException {
+// Read all employees from file and return as a List of strings
+private static List<String> loadEmployeesFromFile() throws IOException {
     File file = new File(Constants.EMPLOYEE_FILE);
     if (!file.exists() || file.length() == 0) {
-        return new ArrayList<>();
+        return new ArrayList<>(); // Return empty list if file does not exist or is empty
     }
     try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
         String line = reader.readLine();
@@ -19,15 +19,15 @@ private static List<String> readEmployees() throws IOException {
     }
 }
 
-// Write all employees to file
-private static void writeEmployees(List<String> employees) throws IOException {
+// Write the list of employees back to the file
+private static void saveEmployeesToFile(List<String> employees) throws IOException {
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE))) {
         writer.write(String.join(",", employees));
     }
 }
 
-//  Append a new employee
-private static void appendEmployee(String employeeName) throws IOException {
+// Append a new employee to the file
+private static void addEmployeeToFile(String employeeName) throws IOException {
     if (employeeName.isEmpty()) {
         throw new IllegalArgumentException("Employee name cannot be empty.");
     }
@@ -43,25 +43,26 @@ private static void appendEmployee(String employeeName) throws IOException {
 
 public static void main(String[] args) {
 
+    // Validate that exactly one argument is provided
     if (args.length != 1) {
         System.out.println("Error: Invalid number of arguments.");
         printUsage();
         return;
     }
 
-    String command = args[0].trim();
-    if (command.isEmpty()) {
+    String userCommand = args[0].trim();
+    if (userCommand.isEmpty()) {
         System.out.println("Error: Command cannot be empty.");
         printUsage();
         return;
     }
 
     try {
-        switch (command.charAt(0)) {
+        switch (userCommand.charAt(0)) {
 
             case 'l': // List all employees
                 System.out.println(Constants.LOADING_MSG);
-                List<String> employees = readEmployees();
+                List<String> employees = loadEmployeesFromFile();
                 if (employees.isEmpty()) {
                     System.out.println("No employees found.");
                 } else {
@@ -72,39 +73,39 @@ public static void main(String[] args) {
 
             case 's': // Show a random employee
                 System.out.println(Constants.LOADING_MSG);
-                employees = readEmployees();
+                employees = loadEmployeesFromFile();
                 if (employees.isEmpty()) {
                     System.out.println(Constants.EMPLOYEE_NOT_FOUND_MSG);
                 } else {
-                    String randomEmp = employees.get(new Random().nextInt(employees.size()));
-                    System.out.println("Random employee: " + randomEmp.trim());
+                    String randomEmployee = employees.get(new Random().nextInt(employees.size()));
+                    System.out.println("Random employee: " + randomEmployee.trim());
                 }
                 System.out.println(Constants.DATA_LOADED_MSG);
                 break;
 
-            case '+': // Add new employee
-                String newEmp = command.substring(1).trim();
-                if (newEmp.isEmpty()) {
+            case '+': // Add a new employee
+                String newEmployee = userCommand.substring(1).trim();
+                if (newEmployee.isEmpty()) {
                     System.out.println("Error: Employee name to add cannot be empty.");
                 } else {
                     System.out.println(Constants.LOADING_MSG);
-                    appendEmployee(newEmp);
-                    System.out.println("Employee '" + newEmp + "' added successfully.");
+                    addEmployeeToFile(newEmployee);
+                    System.out.println("Employee '" + newEmployee + "' added successfully.");
                     System.out.println(Constants.DATA_LOADED_MSG);
                 }
                 break;
 
-            case '?': // Search employee
-                String searchName = command.substring(1).trim();
+            case '?': // Search for an employee
+                String searchName = userCommand.substring(1).trim();
                 if (searchName.isEmpty()) {
                     System.out.println("Error: Employee name to search cannot be empty.");
                 } else {
                     System.out.println(Constants.LOADING_MSG);
-                    employees = readEmployees();
-                    boolean employeeExists = employees.stream()
+                    employees = loadEmployeesFromFile();
+                    boolean found = employees.stream()
                             .map(String::trim)
                             .anyMatch(emp -> emp.equalsIgnoreCase(searchName));
-                    if (employeeExists) {
+                    if (found) {
                         System.out.println(Constants.EMPLOYEE_FOUND_MSG + " (" + searchName + ")");
                     } else {
                         System.out.println(Constants.EMPLOYEE_NOT_FOUND_MSG + " (" + searchName + ")");
@@ -113,39 +114,39 @@ public static void main(String[] args) {
                 }
                 break;
 
-            case 'c': // Count employees
+            case 'c': // Count the total number of employees
                 System.out.println(Constants.LOADING_MSG);
-                int count = readEmployees().size();
-                System.out.println(count + " employee(s) found.");
+                int employeeCount = loadEmployeesFromFile().size();
+                System.out.println(employeeCount + " employee(s) found.");
                 System.out.println(Constants.DATA_LOADED_MSG);
                 break;
 
-            case 'u': // Update employee
-                String updateName = command.substring(1).trim();
-                if (updateName.isEmpty()) {
+            case 'u': // Update an existing employee
+                String oldName = userCommand.substring(1).trim();
+                if (oldName.isEmpty()) {
                     System.out.println("Error: Employee name to update cannot be empty.");
                 } else {
                     System.out.println(Constants.LOADING_MSG);
-                    employees = readEmployees();
-                    if (employees.contains(updateName)) {
-                        Collections.replaceAll(employees, updateName, "Updated");
-                        writeEmployees(employees);
-                        System.out.println(Constants.DATA_UPDATED_MSG + " (" + updateName + ")");
+                    employees = loadEmployeesFromFile();
+                    if (employees.contains(oldName)) {
+                        Collections.replaceAll(employees, oldName, "Updated");
+                        saveEmployeesToFile(employees);
+                        System.out.println(Constants.DATA_UPDATED_MSG + " (" + oldName + ")");
                     } else {
-                        System.out.println(Constants.EMPLOYEE_NOT_FOUND_MSG + " (" + updateName + ")");
+                        System.out.println(Constants.EMPLOYEE_NOT_FOUND_MSG + " (" + oldName + ")");
                     }
                 }
                 break;
 
-            case 'd': // Delete employee
-                String deleteName = command.substring(1).trim();
+            case 'd': // Delete an employee
+                String deleteName = userCommand.substring(1).trim();
                 if (deleteName.isEmpty()) {
                     System.out.println("Error: Employee name to delete cannot be empty.");
                 } else {
                     System.out.println(Constants.LOADING_MSG);
-                    employees = readEmployees();
+                    employees = loadEmployeesFromFile();
                     if (employees.removeIf(emp -> emp.trim().equalsIgnoreCase(deleteName))) {
-                        writeEmployees(employees);
+                        saveEmployeesToFile(employees);
                         System.out.println(Constants.DATA_DELETED_MSG + " (" + deleteName + ")");
                     } else {
                         System.out.println(Constants.EMPLOYEE_NOT_FOUND_MSG + " (" + deleteName + ")");
@@ -153,8 +154,8 @@ public static void main(String[] args) {
                 }
                 break;
 
-            default:
-                System.out.println("Error: Unsupported command '" + command + "'");
+            default: // Handle unsupported commands
+                System.out.println("Error: Unsupported command '" + userCommand + "'");
                 printUsage();
         }
 
@@ -167,6 +168,7 @@ public static void main(String[] args) {
     }
 }
 
+// Display usage instructions for the program
 private static void printUsage() {
     System.out.println("Usage:");
     System.out.println("  java EmployeeManager l         // List all employees");
