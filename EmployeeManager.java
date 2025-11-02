@@ -26,28 +26,14 @@ public class EmployeeManager {
                 return;
             }
         }
+        List<String> employeeList = readEmployees();
 
-        List<String> employeeList = new ArrayList<>();
-        int employeeCount = 0;
-
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader("employees.txt"));
-            String line = reader.readLine();
-            if (line != null && !line.isEmpty()) {
-                employeeList = new ArrayList<>(Arrays.asList(line.split(",")));
-                employeeCount = employeeList.size();
-            }
-            reader.close();
-        } catch (IOException e) {
-            System.out.println("Error reading employees.txt: " + e.getMessage());
-        }
-
- 
+       
         for (String command : args) {
             if (command.equals("s")) {
                 String searchQuery = "Alice Johnson"; 
                 boolean isFound = false;
-                for (int index = 0; index < employeeCount; index++) {
+                for (int index = 0; index < employeeList.size(); index++) {
                     if (employeeList.get(index).equalsIgnoreCase(searchQuery)) {
                         isFound = true;
                         break;
@@ -59,6 +45,40 @@ public class EmployeeManager {
                     System.out.println(searchQuery + " not found.");
                 }
             }
+
+            if (command.equals("+")) {
+                String newEmployee = "David Green"; 
+                employeeList.add(newEmployee);
+                writeEmployees(employeeList);
+                System.out.println(newEmployee + " added to employee list.");
+            }
+        }
+    }
+
+    
+    public static List<String> readEmployees() {
+        List<String> employees = new ArrayList<>();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("employees.txt"));
+            String line = reader.readLine();
+            if (line != null && !line.isEmpty()) {
+                employees = new ArrayList<>(Arrays.asList(line.split(",")));
+            }
+            reader.close();
+        } catch (IOException e) {
+            System.out.println("Error reading employees.txt: " + e.getMessage());
+        }
+        return employees;
+    }
+
+    // Method to write employees to file
+    public static void writeEmployees(List<String> employees) {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("employees.txt"));
+            writer.write(String.join(",", employees));
+            writer.close();
+        } catch (IOException e) {
+            System.out.println("Error writing employees.txt: " + e.getMessage());
         }
     }
 }
