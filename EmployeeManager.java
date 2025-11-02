@@ -4,6 +4,21 @@ import java.util.*;
 
 public class EmployeeManager {
     public static void main(String[] args) {
+
+        // Task #2 – Validate arguments
+        if (args.length != 1) {
+            System.out.println("Invalid number of arguments. Please provide exactly one argument.");
+            System.out.println("Usage examples:");
+            System.out.println("  l   - List all employees");
+            System.out.println("  s   - Show a random employee");
+            System.out.println("  +<name> - Add a new employee");
+            System.out.println("  ?<name> - Search for an employee");
+            System.out.println("  u<name> - Update an employee");
+            System.out.println("  d<name> - Delete an employee");
+            System.out.println("  c   - Count words and characters");
+            return; 
+        }
+
         // Check arguments
         if (args[0].equals("l")) {
             System.out.println("Loading data ...");
@@ -175,7 +190,7 @@ public class EmployeeManager {
 
             }
             System.out.println("Data Deleted.");
-            
+
         }
     }
 }
