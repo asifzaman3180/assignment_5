@@ -48,7 +48,8 @@ public class EmployeeManager {
         else if (command.startsWith("+")) {
             System.out.println("Loading data ...");
             try {
-                appendEmployee(command.substring(1));
+                String newEmployee = command.substring(1);
+                appendEmployee(newEmployee);
             } catch (Exception ex) {}
             System.out.println("Data Loaded.");
         } 
@@ -59,13 +60,11 @@ public class EmployeeManager {
             try {
                 List<String> employees = readEmployees();
                 String searchEmployee = command.substring(1);
-
                 if (employees.contains(searchEmployee)) {
                     System.out.println("Employee found!");
                 } else {
                     System.out.println("Employee not found!");
                 }
-
             } catch (Exception ex) {}
             System.out.println("Data Loaded.");
         } 
@@ -107,10 +106,23 @@ public class EmployeeManager {
                 writeEmployees(employees);
             } catch (Exception ex) {}
             System.out.println("Data Deleted.");
+        } 
+        
+        // Handle invalid arguments (Task #9)
+        else {
+            System.out.println("Invalid or unsupported argument: \"" + command + "\"");
+            System.out.println("Please use one of the following commands:");
+            System.out.println("  l        - List all employees");
+            System.out.println("  s        - Show a random employee");
+            System.out.println("  +<name>  - Add a new employee");
+            System.out.println("  ?<name>  - Search for an employee");
+            System.out.println("  u<name>  - Update an employee");
+            System.out.println("  d<name>  - Delete an employee");
+            System.out.println("  c        - Count words and characters");
         }
     }
 
-    //Helper Methods 
+    // =================== Helper Methods ===================
 
     private static List<String> readEmployees() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(Constants.EMPLOYEE_FILE)));
@@ -131,7 +143,10 @@ public class EmployeeManager {
 
     private static void appendEmployee(String newEmployee) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE, true));
-        writer.write(", " + newEmployee);
+        // Add comma only if the file is not empty
+        List<String> employees = readEmployees();
+        if (!employees.isEmpty()) writer.write(", ");
+        writer.write(newEmployee);
         writer.close();
     }
 }
