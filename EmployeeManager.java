@@ -5,89 +5,91 @@ import java.util.*;
 public class EmployeeManager {
 
     public static void main(String[] args) {
-
         if (args.length == 0) {
-            System.out.println(Constants.NO_COMMAND);
+            System.out.println("Please provide a command (l, s, +Name, ?Name, c, uName, dName).");
             return;
         }
 
         String command = args[0];
+        System.out.println("Loading data ...");
 
-        if (command.equals("l")) {
-            System.out.println(Constants.LOADING_DATA);
-            for (String employee : readEmployees()) {
-                System.out.println(employee);
-            }
-            System.out.println(Constants.DATA_LOADED);
+        switch (command.charAt(0)) {
+            case 'l':
+                for (String emp : readEmployees()) System.out.println(emp);
+                System.out.println("Data Loaded.");
+                break;
 
-        } else if (command.equals("s")) {
-            System.out.println(Constants.LOADING_DATA);
-            String[] employees = readEmployees();
-            System.out.println(String.join(",", employees));
-            System.out.println(employees[new Random().nextInt(employees.length)]);
-            System.out.println(Constants.DATA_LOADED);
+            case 's':
+                String[] all = readEmployees();
+                if (all.length > 0) {
+                    System.out.println(String.join(",", all));
+                    System.out.println(all[new Random().nextInt(all.length)]);
+                } else {
+                    System.out.println("No employees found.");
+                }
+                System.out.println("Data Loaded.");
+                break;
 
-        } else if (command.startsWith("+")) {
-            System.out.println(Constants.LOADING_DATA);
-            String nameToAdd = command.substring(1);
-            String[] employees = readEmployees();
-            String[] updated = Arrays.copyOf(employees, employees.length + 1);
-            updated[updated.length - 1] = nameToAdd;
-            writeEmployees(updated);
-            System.out.println(Constants.DATA_LOADED);
+            case '+':
+                String toAdd = command.substring(1);
+                String[] updated = Arrays.copyOf(readEmployees(), readEmployees().length + 1);
+                updated[updated.length - 1] = toAdd;
+                writeEmployees(updated);
+                System.out.println("Data Loaded.");
+                break;
 
-        } else if (command.startsWith("?")) {
-            System.out.println(Constants.LOADING_DATA);
-            String searchName = command.substring(1);
-            boolean found = Arrays.stream(readEmployees()).anyMatch(searchName::equals);
-            System.out.println(found ? Constants.EMPLOYEE_FOUND : Constants.EMPLOYEE_NOT_FOUND);
-            System.out.println(Constants.DATA_LOADED);
+            case '?':
+                String find = command.substring(1);
+                boolean exists = Arrays.asList(readEmployees()).contains(find);
+                System.out.println(exists ? "Employee found!" : "Employee not found.");
+                System.out.println("Data Loaded.");
+                break;
 
-        } else if (command.equals("c")) {
-            System.out.println(Constants.LOADING_DATA);
-            String[] employees = readEmployees();
-            long wordCount = Arrays.stream(employees).filter(s -> !s.isBlank()).count();
-            int charCount = Arrays.stream(employees).mapToInt(String::length).sum();
-            System.out.println(wordCount + " word(s) found, total characters: " + charCount);
-            System.out.println(Constants.DATA_LOADED);
+            case 'c':
+                String[] employees = readEmployees();
+                int totalWords = (int) Arrays.stream(employees).filter(s -> !s.isBlank()).count();
+                int totalChars = Arrays.stream(employees).mapToInt(String::length).sum();
+                System.out.println(totalWords + " word(s) found, total characters: " + totalChars);
+                System.out.println("Data Loaded.");
+                break;
 
-        } else if (command.startsWith("u")) {
-            System.out.println(Constants.LOADING_DATA);
-            String nameToUpdate = command.substring(1);
-            String[] employees = readEmployees();
-            for (int i = 0; i < employees.length; i++) {
-                if (employees[i].equals(nameToUpdate)) employees[i] = "Updated";
-            }
-            writeEmployees(employees);
-            System.out.println(Constants.DATA_UPDATED);
+            case 'u':
+                String nameToUpdate = command.substring(1);
+                String[] list = readEmployees();
+                for (int i = 0; i < list.length; i++)
+                    if (list[i].equals(nameToUpdate)) list[i] = "Updated";
+                writeEmployees(list);
+                System.out.println("Data Updated.");
+                break;
 
-        } else if (command.startsWith("d")) {
-            System.out.println(Constants.LOADING_DATA);
-            String nameToDelete = command.substring(1);
-            writeEmployees(Arrays.stream(readEmployees())
-                    .filter(e -> !e.equals(nameToDelete))
-                    .toArray(String[]::new));
-            System.out.println(Constants.DATA_DELETED);
+            case 'd':
+                String nameToDelete = command.substring(1);
+                List<String> empList = new ArrayList<>(Arrays.asList(readEmployees()));
+                empList.remove(nameToDelete);
+                writeEmployees(empList.toArray(new String[0]));
+                System.out.println("Data Deleted.");
+                break;
+
+            default:
+                System.out.println("Invalid command.");
         }
     }
 
-    // Reusable Methods
     private static String[] readEmployees() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(Constants.EMPLOYEE_FILE))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("employees.txt"))) {
             String line = reader.readLine();
-            if (line == null || line.isBlank()) return new String[0];
-            return line.split(",");
-        } catch (Exception ex) {
-            System.out.println(Constants.ERROR_READING_FILE);
+            return (line == null || line.isBlank()) ? new String[0] : line.split(",");
+        } catch (Exception e) {
+            System.out.println("Error reading employees file.");
             return new String[0];
         }
     }
 
     private static void writeEmployees(String[] employees) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("employees.txt"))) {
             writer.write(String.join(",", employees));
-        } catch (Exception ex) {
-            System.out.println(Constants.ERROR_WRITING_FILE);
+        } catch (Exception e) {
+            System.out.println("Error writing employees file.");
         }
     }
 }
