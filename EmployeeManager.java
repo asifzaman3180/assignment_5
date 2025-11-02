@@ -1,80 +1,117 @@
-// File Name: EmployeeManager.java
+// File: EmployeeManager.java
 import java.io.*;
 import java.util.*;
 
 public class EmployeeManager {
-
     public static void main(String[] args) {
+
         if (args.length == 0) {
             System.out.println("Please provide a command (l, s, +Name, ?Name, c, uName, dName).");
             return;
         }
 
         String command = args[0];
+
+        // single "Loading data" message kept where appropriate
         System.out.println("Loading data ...");
 
         switch (command.charAt(0)) {
-            case 'l':
-                for (String emp : readEmployees()) System.out.println(emp);
-                System.out.println("Data Loaded.");
-                break;
 
-            case 's':
-                String[] all = readEmployees();
-                if (all.length > 0) {
-                    System.out.println(String.join(",", all));
-                    System.out.println(all[new Random().nextInt(all.length)]);
-                } else {
-                    System.out.println("No employees found.");
+            case 'l': 
+                for (String employee : readEmployees()) {
+                    System.out.println(employee);
                 }
                 System.out.println("Data Loaded.");
                 break;
 
-            case '+':
+            case 's': 
+                String[] all = readEmployees();
+                if (all.length == 0) {
+                    System.out.println("No employees found.");
+                } else {
+                    System.out.println(String.join(",", all));
+                    System.out.println(all[new Random().nextInt(all.length)]);
+                }
+                System.out.println("Data Loaded.");
+                break;
+
+            case '+': 
                 String toAdd = command.substring(1);
-                String[] updated = Arrays.copyOf(readEmployees(), readEmployees().length + 1);
-                updated[updated.length - 1] = toAdd;
-                writeEmployees(updated);
+                if (!toAdd.isBlank()) {
+                    String[] current = readEmployees();
+                    String[] extended = Arrays.copyOf(current, current.length + 1);
+                    extended[extended.length - 1] = toAdd;
+                    writeEmployees(extended);
+                    System.out.println("Employee added: \"" + toAdd + "\"");
+                } else {
+                    System.out.println("Error: no name provided to add.");
+                }
                 System.out.println("Data Loaded.");
                 break;
 
-            case '?':
-                String find = command.substring(1);
-                boolean exists = Arrays.asList(readEmployees()).contains(find);
-                System.out.println(exists ? "Employee found!" : "Employee not found.");
+            case '?': 
+                String toSearch = command.substring(1).trim();
+                if (toSearch.isEmpty()) {
+                    System.out.println("Error: please provide a name to search (example: ?Jane Smith).");
+                } else {
+                    String[] list = readEmployees();
+                    boolean found = Arrays.stream(list).anyMatch(name -> name.equals(toSearch));
+                    if (found) {
+                        System.out.println("Employee \"" + toSearch + "\" found.");
+                    } else {
+                        System.out.println("Employee \"" + toSearch + "\" not found.");
+                    }
+                }
                 System.out.println("Data Loaded.");
                 break;
 
-            case 'c':
-                String[] employees = readEmployees();
-                int totalWords = (int) Arrays.stream(employees).filter(s -> !s.isBlank()).count();
-                int totalChars = Arrays.stream(employees).mapToInt(String::length).sum();
-                System.out.println(totalWords + " word(s) found, total characters: " + totalChars);
+            case 'c': 
+                String[] employeesForCount = readEmployees();
+                long count = Arrays.stream(employeesForCount).filter(s -> !s.isBlank()).count();
+                int chars = Arrays.stream(employeesForCount).mapToInt(String::length).sum();
+                System.out.println(count + " employee(s) found, total characters: " + chars);
                 System.out.println("Data Loaded.");
                 break;
 
-            case 'u':
-                String nameToUpdate = command.substring(1);
-                String[] list = readEmployees();
-                for (int i = 0; i < list.length; i++)
-                    if (list[i].equals(nameToUpdate)) list[i] = "Updated";
-                writeEmployees(list);
+            case 'u': 
+                String toUpdate = command.substring(1);
+                if (toUpdate.isBlank()) {
+                    System.out.println("Error: please provide a name to update.");
+                } else {
+                    String[] current = readEmployees();
+                    boolean updated = false;
+                    for (int i = 0; i < current.length; i++) {
+                        if (current[i].equals(toUpdate)) {
+                            current[i] = "Updated";
+                            updated = true;
+                        }
+                    }
+                    writeEmployees(current);
+                    System.out.println(updated ? "Employee updated: \"" + toUpdate + "\"" : "No such employee: \"" + toUpdate + "\"");
+                }
                 System.out.println("Data Updated.");
                 break;
 
             case 'd':
-                String nameToDelete = command.substring(1);
-                List<String> empList = new ArrayList<>(Arrays.asList(readEmployees()));
-                empList.remove(nameToDelete);
-                writeEmployees(empList.toArray(new String[0]));
+                String toDelete = command.substring(1).trim();
+                if (toDelete.isEmpty()) {
+                    System.out.println("Error: please provide a name to delete.");
+                } else {
+                    List<String> list = new ArrayList<>(Arrays.asList(readEmployees()));
+                    boolean removed = list.remove(toDelete);
+                    writeEmployees(list.toArray(new String[0]));
+                    System.out.println(removed ? "Employee deleted: \"" + toDelete + "\"" : "No such employee: \"" + toDelete + "\"");
+                }
                 System.out.println("Data Deleted.");
                 break;
 
             default:
-                System.out.println("Invalid command.");
+                System.out.println("Error: Unsupported command \"" + command + "\". Try: l, s, +Name, ?Name, c, uName, dName.");
+                break;
         }
     }
 
+    // Reusable read method
     private static String[] readEmployees() {
         try (BufferedReader reader = new BufferedReader(new FileReader("employees.txt"))) {
             String line = reader.readLine();
@@ -85,6 +122,7 @@ public class EmployeeManager {
         }
     }
 
+    // Reusable write method
     private static void writeEmployees(String[] employees) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("employees.txt"))) {
             writer.write(String.join(",", employees));
