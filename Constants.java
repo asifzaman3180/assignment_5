@@ -2,13 +2,10 @@
 import java.text.SimpleDateFormat;
 
 public class Constants {
-    // ✅ File path constants
     public static final String EMPLOYEE_FILE = "employees.txt";
 
-    // ✅ Date format constants
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
-    // ✅ Common messages
     public static final String LOADING_MSG = "Loading data ...";
     public static final String DATA_LOADED_MSG = "Data Loaded.";
     public static final String DATA_UPDATED_MSG = "Data Updated.";
