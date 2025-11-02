@@ -4,6 +4,14 @@ import java.util.*;
 
 public class EmployeeManager {
     public static void main(String[] args) {
+
+        
+        if (args.length != 1) {
+            System.out.println("Error: Invalid number of arguments.");
+            System.out.println("Usage: java EmployeeManager [l | s | +name | ?name | c | u | dname]");
+            return; 
+        }
+
         // Check arguments
         if (args[0].equals("l")) {
             System.out.println("Loading data ...");
