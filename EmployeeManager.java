@@ -11,7 +11,7 @@ public class EmployeeManager
 {
     public static void main(String[] args)
     {
-        // ✅ Task 2: Validate command-line arguments
+        // ✅ Validate command-line arguments
         if (args.length != 1)
         {
             System.out.println("Usage: java EmployeeManager <option>");
@@ -19,30 +19,29 @@ public class EmployeeManager
             System.exit(1);
         }
 
-        // ✅ Task 5: Use constants instead of literals
         String userOption = args[0];
-        String employeeFilePath = Constants.EMPLOYEE_FILE_PATH;
 
+        // ✅ Use constant for file path
         switch (userOption)
         {
             case Constants.OPTION_LIST:
-                listEmployees(employeeFilePath);
+                listEmployees();
                 break;
 
             case Constants.OPTION_SEARCH:
-                searchEmployee(employeeFilePath);
+                searchEmployee();
                 break;
 
             case Constants.OPTION_ADD:
-                addEmployee(employeeFilePath);
+                addEmployee();
                 break;
 
             case Constants.OPTION_COUNT:
-                countEmployees(employeeFilePath);
+                countEmployees();
                 break;
 
             case Constants.OPTION_UPDATE:
-                updateEmployee(employeeFilePath);
+                updateEmployee();
                 break;
 
             case Constants.OPTION_HELP:
@@ -58,12 +57,9 @@ public class EmployeeManager
     // ============================================================
     // 🧾 1. LIST EMPLOYEES
     // ============================================================
-    private static void listEmployees(String employeeFilePath)
+    private static void listEmployees()
     {
-        List<String> employeeList = readEmployeesFromFile(employeeFilePath);
-
-        System.out.println("=== Employee List ===");
-        for (String employeeName : employeeList)
+        for (String employeeName : readEmployeesFromFile())
         {
             System.out.println(employeeName);
         }
@@ -72,25 +68,23 @@ public class EmployeeManager
     // ============================================================
     // 🔍 2. SEARCH EMPLOYEE
     // ============================================================
-    private static void searchEmployee(String employeeFilePath)
+    private static void searchEmployee()
     {
         Scanner inputScanner = new Scanner(System.in);
         System.out.print("Enter name to search: ");
         String searchQuery = inputScanner.nextLine().toLowerCase();
 
-        List<String> employeeList = readEmployeesFromFile(employeeFilePath);
-        boolean isFound = false;
-
-        for (String employeeName : employeeList)
+        boolean found = false;
+        for (String employeeName : readEmployeesFromFile())
         {
             if (employeeName.toLowerCase().contains(searchQuery))
             {
                 System.out.println("Found: " + employeeName);
-                isFound = true;
+                found = true;
             }
         }
 
-        if (!isFound)
+        if (!found)
         {
             System.out.println("No match found.");
         }
@@ -99,7 +93,7 @@ public class EmployeeManager
     // ============================================================
     // ➕ 3. ADD EMPLOYEE
     // ============================================================
-    private static void addEmployee(String employeeFilePath)
+    private static void addEmployee()
     {
         Scanner inputScanner = new Scanner(System.in);
         System.out.print("Enter new employee name: ");
@@ -111,9 +105,9 @@ public class EmployeeManager
             return;
         }
 
-        List<String> employeeList = readEmployeesFromFile(employeeFilePath);
+        List<String> employeeList = readEmployeesFromFile();
         employeeList.add(newEmployeeName);
-        writeEmployeesToFile(employeeFilePath, employeeList);
+        writeEmployeesToFile(employeeList);
 
         System.out.println("Employee added successfully.");
     }
@@ -121,21 +115,20 @@ public class EmployeeManager
     // ============================================================
     // 🔢 4. COUNT EMPLOYEES
     // ============================================================
-    private static void countEmployees(String employeeFilePath)
+    private static void countEmployees()
     {
-        List<String> employeeList = readEmployeesFromFile(employeeFilePath);
-        System.out.println("Total employees: " + employeeList.size());
+        System.out.println("Total employees: " + readEmployeesFromFile().size());
     }
 
     // ============================================================
     // ✏️ 5. UPDATE EMPLOYEE
     // ============================================================
-    private static void updateEmployee(String employeeFilePath)
+    private static void updateEmployee()
     {
         Scanner inputScanner = new Scanner(System.in);
-        List<String> employeeList = readEmployeesFromFile(employeeFilePath);
+        List<String> employeeList = readEmployeesFromFile();
 
-        System.out.println("Enter the employee name to update:");
+        System.out.print("Enter the employee name to update: ");
         String oldEmployeeName = inputScanner.nextLine();
 
         if (!employeeList.contains(oldEmployeeName))
@@ -144,13 +137,12 @@ public class EmployeeManager
             return;
         }
 
-        System.out.println("Enter new name:");
+        System.out.print("Enter new name: ");
         String newEmployeeName = inputScanner.nextLine();
 
-        int employeeIndex = employeeList.indexOf(oldEmployeeName);
-        employeeList.set(employeeIndex, newEmployeeName);
+        employeeList.set(employeeList.indexOf(oldEmployeeName), newEmployeeName);
+        writeEmployeesToFile(employeeList);
 
-        writeEmployeesToFile(employeeFilePath, employeeList);
         System.out.println("Employee updated successfully.");
     }
 
@@ -169,19 +161,18 @@ public class EmployeeManager
     }
 
     // ============================================================
-    // 🗂️ 7. FILE OPERATIONS
+    // 🗂️ 7. FILE OPERATIONS (Refactored & Simplified)
     // ============================================================
-    private static List<String> readEmployeesFromFile(String employeeFilePath)
+    private static List<String> readEmployeesFromFile()
     {
         List<String> employeeList = new ArrayList<>();
 
-        try (BufferedReader fileReader = new BufferedReader(new FileReader(employeeFilePath)))
+        try (BufferedReader fileReader = new BufferedReader(new FileReader(Constants.EMPLOYEE_FILE_PATH)))
         {
             String line = fileReader.readLine();
             if (line != null)
             {
-                String[] employeeNames = line.split(",");
-                for (String name : employeeNames)
+                for (String name : line.split(","))
                 {
                     employeeList.add(name.trim());
                 }
@@ -195,9 +186,9 @@ public class EmployeeManager
         return employeeList;
     }
 
-    private static void writeEmployeesToFile(String employeeFilePath, List<String> employeeList)
+    private static void writeEmployeesToFile(List<String> employeeList)
     {
-        try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(employeeFilePath)))
+        try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE_PATH)))
         {
             fileWriter.write(String.join(",", employeeList));
         }
