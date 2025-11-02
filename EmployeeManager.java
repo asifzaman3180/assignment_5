@@ -103,11 +103,11 @@ public class EmployeeManager {
     }
 
     /**
-     * Reads the employee list from "employees.txt".
+     * Reads the employee list from the file defined in Constants.
      * Returns null if an error occurs.
      */
     private static String[] readEmployees() {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("employees.txt")))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(Constants.EMPLOYEE_FILE)))) {
             String line = reader.readLine();
             if (line != null && !line.isEmpty()) {
                 return line.split(",");
@@ -119,10 +119,10 @@ public class EmployeeManager {
     }
 
     /**
-     * Writes the given employee list to "employees.txt".
+     * Writes the given employee list to the file defined in Constants.
      */
     private static void writeEmployees(String[] employeeList) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("employees.txt"))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE))) {
             writer.write(String.join(",", employeeList));
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -130,10 +130,10 @@ public class EmployeeManager {
     }
 
     /**
-     * Appends a new employee to "employees.txt".
+     * Appends a new employee to the file defined in Constants.
      */
     private static void appendEmployee(String newEmployee) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("employees.txt", true))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE, true))) {
             writer.write(", " + newEmployee);
         } catch (Exception exception) {
             exception.printStackTrace();
