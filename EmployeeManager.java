@@ -34,29 +34,38 @@ public class EmployeeManager {
         List<String> employeeList = readEmployees();
 
         // ------------------------------
-        // Handle commands
+        // Handle commands (Simplified Control Flow)
         // ------------------------------
         for (String command : args) {
 
-            // Add employee
-            if (command.equals("+")) {
-                String newEmployee = "David Green";
-                employeeList.add(newEmployee);
-                writeEmployees(employeeList);
-                System.out.println(newEmployee + " added to employee list.");
-            }
+            switch (command) {
 
-            // Search employee
-            if (command.equals("s")) {
-                String searchQuery = "Alice Johnson";
-                boolean found = employeeList.stream()
-                        .anyMatch(emp -> emp.equalsIgnoreCase(searchQuery));
-                System.out.println(found ? searchQuery + " found." : searchQuery + " not found.");
-            }
+                case "+" -> {  // Add employee
+                    String newEmployee = "David Green";
+                    employeeList.add(newEmployee);
+                    writeEmployees(employeeList);
+                    System.out.println(newEmployee + " added to employee list.");
+                }
 
-            // List employees
-            if (command.equals("l")) {
-                System.out.println("Employee List: " + String.join(", ", employeeList));
+                case "s" -> {  // Search employee
+                    String searchQuery = "Alice Johnson";
+                    // Directly check using stream().anyMatch()
+                    if (employeeList.stream().anyMatch(emp -> emp.equalsIgnoreCase(searchQuery))) {
+                        System.out.println(searchQuery + " found.");
+                    } else {
+                        System.out.println(searchQuery + " not found.");
+                    }
+                }
+
+                case "l" -> {  // List employees
+                    System.out.println("Employee List: " + String.join(", ", employeeList));
+                }
+
+                // case "?" -> { ... }  // future operations
+                // case "c" -> { ... }
+                // case "u" -> { ... }
+
+                default -> System.out.println("Command " + command + " not handled.");
             }
         }
     }
@@ -66,13 +75,11 @@ public class EmployeeManager {
     // ------------------------------
     public static List<String> readEmployees() {
         List<String> employees = new ArrayList<>();
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(Constants.EMPLOYEE_FILE));
+        try (BufferedReader reader = new BufferedReader(new FileReader(Constants.EMPLOYEE_FILE))) {
             String line = reader.readLine();
             if (line != null && !line.isEmpty()) {
                 employees = new ArrayList<>(Arrays.asList(line.split(",")));
             }
-            reader.close();
         } catch (IOException e) {
             System.out.println("Error reading " + Constants.EMPLOYEE_FILE + ": " + e.getMessage());
         }
@@ -80,10 +87,8 @@ public class EmployeeManager {
     }
 
     public static void writeEmployees(List<String> employees) {
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE));
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE))) {
             writer.write(String.join(",", employees));
-            writer.close();
         } catch (IOException e) {
             System.out.println("Error writing " + Constants.EMPLOYEE_FILE + ": " + e.getMessage());
         }
