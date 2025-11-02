@@ -17,8 +17,7 @@ public class EmployeeManager {
         if (args[0].equals("l")) {
             System.out.println(Constants.LOADING_DATA);
             try {
-                String[] employees = readEmployees();
-                for (String employee : employees) {
+                for (String employee : readEmployees()) {
                     System.out.println(employee.trim());
                 }
             } catch (Exception exception) {}
@@ -29,20 +28,15 @@ public class EmployeeManager {
             System.out.println(Constants.LOADING_DATA);
             try {
                 String[] employees = readEmployees();
-                Random random = new Random();
-                int randomIndex = random.nextInt(employees.length);
-                System.out.println(employees[randomIndex].trim());
+                System.out.println(employees[new Random().nextInt(employees.length)].trim());
             } catch (Exception exception) {}
             System.out.println(Constants.DATA_LOADED);
         }
 
         else if (args[0].contains("+")) {
             System.out.println(Constants.LOADING_DATA);
-            try {
-                String nameToAdd = args[0].substring(1);
-                BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE, true));
-                writer.write(", " + nameToAdd);
-                writer.close();
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE, true))) {
+                writer.write(", " + args[0].substring(1));
             } catch (Exception exception) {}
             System.out.println(Constants.DATA_LOADED);
         }
@@ -50,13 +44,10 @@ public class EmployeeManager {
         else if (args[0].contains("?")) {
             System.out.println(Constants.LOADING_DATA);
             try {
-                String[] employees = readEmployees();
                 String searchName = args[0].substring(1);
-                boolean found = false;
-                for (String employee : employees) {
+                for (String employee : readEmployees()) {
                     if (employee.trim().equals(searchName)) {
                         System.out.println("Employee found!");
-                        found = true;
                         break;
                     }
                 }
@@ -67,13 +58,11 @@ public class EmployeeManager {
         else if (args[0].contains("c")) {
             System.out.println(Constants.LOADING_DATA);
             try {
-                String[] employees = readEmployees();
-                String fullLine = String.join(",", employees);
-                char[] chars = fullLine.toCharArray();
-                boolean inWord = false;
+                String content = String.join(",", readEmployees());
                 int wordCount = 0;
-                for (char character : chars) {
-                    if (character == ' ') {
+                boolean inWord = false;
+                for (char ch : content.toCharArray()) {
+                    if (ch == ' ') {
                         if (!inWord) {
                             wordCount++;
                             inWord = true;
@@ -82,7 +71,7 @@ public class EmployeeManager {
                         }
                     }
                 }
-                System.out.println(wordCount + " word(s) found, " + chars.length + " characters total.");
+                System.out.println(wordCount + " word(s) found, " + content.length() + " characters total.");
             } catch (Exception exception) {}
             System.out.println(Constants.DATA_LOADED);
         }
@@ -105,10 +94,8 @@ public class EmployeeManager {
         else if (args[0].contains("d")) {
             System.out.println(Constants.LOADING_DATA);
             try {
-                String[] employees = readEmployees();
-                String nameToDelete = args[0].substring(1);
-                List<String> employeeList = new ArrayList<>(Arrays.asList(employees));
-                employeeList.removeIf(emp -> emp.trim().equals(nameToDelete));
+                List<String> employeeList = new ArrayList<>(Arrays.asList(readEmployees()));
+                employeeList.removeIf(emp -> emp.trim().equals(args[0].substring(1)));
                 writeEmployees(employeeList.toArray(new String[0]), false);
             } catch (Exception exception) {}
             System.out.println(Constants.DATA_DELETED);
@@ -117,16 +104,16 @@ public class EmployeeManager {
 
     // Helper method to read all employees from file
     private static String[] readEmployees() throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(Constants.EMPLOYEE_FILE)));
-        String line = reader.readLine();
-        reader.close();
-        return line.split(",");
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(new FileInputStream(Constants.EMPLOYEE_FILE)))) {
+            return reader.readLine().split(",");
+        }
     }
 
     // Helper method to write employees to file
     private static void writeEmployees(String[] employees, boolean append) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE, append));
-        writer.write(String.join(",", employees));
-        writer.close();
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE, append))) {
+            writer.write(String.join(",", employees));
+        }
     }
 }
