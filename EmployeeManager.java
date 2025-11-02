@@ -1,139 +1,209 @@
-
-//File Name EmployeeManager.java
 import java.io.*;
 import java.util.*;
 
-public class EmployeeManager {
-    public static void main(String[] args) {
-        // Check arguments
-        if (args.length != 1) {
+/**
+ * EmployeeManager.java
+ * 
+ * Manages employee records stored in employees.txt.
+ * Supports listing, searching, adding, counting, and updating employees.
+ */
+public class EmployeeManager 
+{
+    public static void main(String[] args) 
+    {
+        // ✅ Task 2: Validate command-line arguments
+        if (args.length != 1) 
+        {
             System.out.println("Usage: java EmployeeManager <option>");
-            System.out.println("Options: l, s, +, ?, c, u");
+            System.out.println("Options: l (list), s (search), + (add), ? (help), c (count), u (update)");
             System.exit(1);
         }
 
-        if (args[0].equals("l")) {
-            System.out.println("Loading data ...");
-            try {
-                BufferedReader r = new BufferedReader(
-                        new InputStreamReader(
-                                new FileInputStream("employees.txt")));
-                String l = r.readLine();
-                String e[] = l.split(",");
-                for (String emp : e) {
-                    System.out.println(emp);
+        // ✅ Task 3: Improved variable naming
+        String userOption = args[0];
+        String employeeFilePath = "employees.txt";
+
+        switch (userOption) 
+        {
+            case "l":   // List all employees
+                listEmployees(employeeFilePath);
+                break;
+
+            case "s":   // Search employee
+                searchEmployee(employeeFilePath);
+                break;
+
+            case "+":   // Add new employee
+                addEmployee(employeeFilePath);
+                break;
+
+            case "c":   // Count total employees
+                countEmployees(employeeFilePath);
+                break;
+
+            case "u":   // Update employee
+                updateEmployee(employeeFilePath);
+                break;
+
+            case "?":   // Help
+                showHelp();
+                break;
+
+            default:
+                System.out.println("Invalid option. Try: l, s, +, ?, c, u");
+                break;
+        }
+    }
+
+    // ============================================================
+    // 🧾 1. LIST EMPLOYEES
+    // ============================================================
+    private static void listEmployees(String employeeFilePath) 
+    {
+        List<String> employeeList = readEmployeesFromFile(employeeFilePath);
+
+        System.out.println("=== Employee List ===");
+        for (String employeeName : employeeList) 
+        {
+            System.out.println(employeeName);
+        }
+    }
+
+    // ============================================================
+    // 🔍 2. SEARCH EMPLOYEE
+    // ============================================================
+    private static void searchEmployee(String employeeFilePath) 
+    {
+        Scanner inputScanner = new Scanner(System.in);
+        System.out.print("Enter name to search: ");
+        String searchQuery = inputScanner.nextLine().toLowerCase();
+
+        List<String> employeeList = readEmployeesFromFile(employeeFilePath);
+        boolean isFound = false;
+
+        for (String employeeName : employeeList) 
+        {
+            if (employeeName.toLowerCase().contains(searchQuery)) 
+            {
+                System.out.println("Found: " + employeeName);
+                isFound = true;
+            }
+        }
+
+        if (!isFound) 
+        {
+            System.out.println("No match found.");
+        }
+    }
+
+    // ============================================================
+    // ➕ 3. ADD EMPLOYEE
+    // ============================================================
+    private static void addEmployee(String employeeFilePath) 
+    {
+        Scanner inputScanner = new Scanner(System.in);
+        System.out.print("Enter new employee name: ");
+        String newEmployeeName = inputScanner.nextLine().trim();
+
+        if (newEmployeeName.isEmpty()) 
+        {
+            System.out.println("Invalid name.");
+            return;
+        }
+
+        List<String> employeeList = readEmployeesFromFile(employeeFilePath);
+        employeeList.add(newEmployeeName);
+        writeEmployeesToFile(employeeFilePath, employeeList);
+
+        System.out.println("Employee added successfully.");
+    }
+
+    // ============================================================
+    // 🔢 4. COUNT EMPLOYEES
+    // ============================================================
+    private static void countEmployees(String employeeFilePath) 
+    {
+        List<String> employeeList = readEmployeesFromFile(employeeFilePath);
+        System.out.println("Total employees: " + employeeList.size());
+    }
+
+    // ============================================================
+    // ✏️ 5. UPDATE EMPLOYEE
+    // ============================================================
+    private static void updateEmployee(String employeeFilePath) 
+    {
+        Scanner inputScanner = new Scanner(System.in);
+        List<String> employeeList = readEmployeesFromFile(employeeFilePath);
+
+        System.out.println("Enter the employee name to update:");
+        String oldEmployeeName = inputScanner.nextLine();
+
+        if (!employeeList.contains(oldEmployeeName)) 
+        {
+            System.out.println("Employee not found.");
+            return;
+        }
+
+        System.out.println("Enter new name:");
+        String newEmployeeName = inputScanner.nextLine();
+
+        int employeeIndex = employeeList.indexOf(oldEmployeeName);
+        employeeList.set(employeeIndex, newEmployeeName);
+
+        writeEmployeesToFile(employeeFilePath, employeeList);
+        System.out.println("Employee updated successfully.");
+    }
+
+    // ============================================================
+    // 🧠 6. SHOW HELP
+    // ============================================================
+    private static void showHelp() 
+    {
+        System.out.println("Options:");
+        System.out.println("l - List employees");
+        System.out.println("s - Search employee");
+        System.out.println("+ - Add employee");
+        System.out.println("c - Count employees");
+        System.out.println("u - Update employee");
+        System.out.println("? - Show help");
+    }
+
+    // ============================================================
+    // 🗂️ 7. FILE READ & WRITE HELPERS
+    // ============================================================
+    private static List<String> readEmployeesFromFile(String employeeFilePath) 
+    {
+        List<String> employeeList = new ArrayList<>();
+
+        try (BufferedReader fileReader = new BufferedReader(new FileReader(employeeFilePath))) 
+        {
+            String line = fileReader.readLine();
+            if (line != null) 
+            {
+                String[] employeeNames = line.split(",");
+                for (String name : employeeNames) 
+                {
+                    employeeList.add(name.trim());
                 }
-            } catch (Exception e) {
             }
-            System.out.println("Data Loaded.");
-        } else if (args[0].equals("s")) {
-            System.out.println("Loading data ...");
-            try {
-                BufferedReader r = new BufferedReader(
-                        new InputStreamReader(
-                                new FileInputStream("employees.txt")));
-                String l = r.readLine();
-                System.out.println(l);
-                String e[] = l.split(",");
-                Random rand = new Random();
-                int idx = rand.nextInt(e.length);
-                System.out.println(e[idx]);
-            } catch (Exception e) {
-            }
-            System.out.println("Data Loaded.");
-        } else if (args[0].contains("+")) {
-            System.out.println("Loading data ...");
-            try {
-                BufferedWriter w = new BufferedWriter(
-                        new FileWriter("employees.txt", true));
-                String n = args[0].substring(1);
-                w.write(", " + n);
-                w.close();
-            } catch (Exception e) {
-            }
-            System.out.println("Data Loaded.");
-        } else if (args[0].contains("?")) {
-            System.out.println("Loading data ...");
-            try {
-                BufferedReader r = new BufferedReader(
-                        new InputStreamReader(
-                                new FileInputStream("employees.txt")));
-                String l = r.readLine();
-                String e[] = l.split(",");
-                boolean found = false;
-                String s = args[0].substring(1);
-                for (int i = 0; i < e.length && !found; i++) {
-                    if (e[i].equals(s)) {
-                        System.out.println("Employee found!");
-                        found = true;
-                    }
-                }
-            } catch (Exception e) {
-            }
-            System.out.println("Data Loaded.");
-        } else if (args[0].contains("c")) {
-            System.out.println("Loading data ...");
-            try {
-                BufferedReader r = new BufferedReader(
-                        new InputStreamReader(
-                                new FileInputStream("employees.txt")));
-                String l = r.readLine();
-                char[] chars = l.toCharArray();
-                boolean inWord = false;
-                int count = 0;
-                for (char c : chars) {
-                    if (c == ' ') {
-                        if (!inWord) {
-                            count++;
-                            inWord = true;
-                        } else {
-                            inWord = false;
-                        }
-                    }
-                }
-                System.out.println(count + " word(s) found " + chars.length);
-            } catch (Exception e) {
-            }
-            System.out.println("Data Loaded.");
-        } else if (args[0].contains("u")) {
-            System.out.println("Loading data ...");
-            try {
-                BufferedReader r = new BufferedReader(
-                        new InputStreamReader(
-                                new FileInputStream("employees.txt")));
-                String l = r.readLine();
-                String e[] = l.split(",");
-                String n = args[0].substring(1);
-                for (int i = 0; i < e.length; i++) {
-                    if (e[i].equals(n)) {
-                        e[i] = "Updated";
-                    }
-                }
-                BufferedWriter w = new BufferedWriter(
-                        new FileWriter("employees.txt"));
-                w.write(String.join(",", e));
-                w.close();
-            } catch (Exception e) {
-            }
-            System.out.println("Data Updated.");
-        } else if (args[0].contains("d")) {
-            System.out.println("Loading data ...");
-            try {
-                BufferedReader r = new BufferedReader(
-                        new InputStreamReader(
-                                new FileInputStream("employees.txt")));
-                String l = r.readLine();
-                String e[] = l.split(",");
-                String n = args[0].substring(1);
-                List<String> list = new ArrayList<>(Arrays.asList(e));
-                list.remove(n);
-                BufferedWriter w = new BufferedWriter(
-                        new FileWriter("employees.txt"));
-                w.write(String.join(",", list));
-                w.close();
-            } catch (Exception e) {
-            }
-            System.out.println("Data Deleted.");
+        } 
+        catch (IOException ioException) 
+        {
+            System.out.println("Error reading file: " + ioException.getMessage());
+        }
+
+        return employeeList;
+    }
+
+    private static void writeEmployeesToFile(String employeeFilePath, List<String> employeeList) 
+    {
+        try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(employeeFilePath))) 
+        {
+            fileWriter.write(String.join(",", employeeList));
+        } 
+        catch (IOException ioException) 
+        {
+            System.out.println("Error writing file: " + ioException.getMessage());
         }
     }
 }
