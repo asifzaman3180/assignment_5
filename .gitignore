@@ -1,0 +1,5 @@
+# ignore most txt and log files
+*.txt
+*.log
+
+!important.log
