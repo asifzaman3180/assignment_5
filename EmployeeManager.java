@@ -13,7 +13,7 @@ public class EmployeeManager {
 
         try {
             if (command.equals("l")) {
-                loadEmployees();
+                listEmployees();
             } 
             else if (command.equals("s")) {
                 showRandomEmployee();
