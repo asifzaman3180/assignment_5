@@ -43,40 +43,46 @@ public class EmployeeManager {
         }
     }
 
-    private static void loadEmployees() throws IOException {
+     //Lists all employees in the file. 
+    private static void listEmployees() throws IOException {
         System.out.println(Constants.LOADING_MSG);
-        String[] employees = readEmployees();
+        String[] employees = readEmployeeData();
         if (employees != null) {
-            for (String emp : employees) System.out.println(emp);
+            for (String employee : employees) {
+                System.out.println(employee);
+            }
         } else {
             System.out.println("No employee data found.");
         }
         System.out.println(Constants.DATA_LOADED_MSG);
     }
 
+    //Prints a random employee from the file. 
     private static void showRandomEmployee() throws IOException {
         System.out.println(Constants.LOADING_MSG);
-        String[] employees = readEmployees();
+        String[] employees = readEmployeeData();
         if (employees != null && employees.length > 0) {
-            Random rand = new Random();
-            System.out.println(employees[rand.nextInt(employees.length)]);
+            Random random = new Random();
+            System.out.println(employees[random.nextInt(employees.length)]);
         } else {
             System.out.println("No employee data found.");
         }
         System.out.println(Constants.DATA_LOADED_MSG);
     }
 
-    private static void addEmployee(String employee) throws IOException {
+    //Adds a new employee to the file. 
+    private static void addEmployee(String employeeName) throws IOException {
         System.out.println(Constants.LOADING_MSG);
-        appendFile(employee.startsWith(",") ? employee : "," + employee);
+        appendToFile(employeeName.startsWith(",") ? employeeName : "," + employeeName);
         System.out.println(Constants.DATA_LOADED_MSG);
     }
 
-    private static void searchEmployee(String employee) throws IOException {
+    //Searches for an employee in the file. 
+    private static void searchEmployee(String employeeName) throws IOException {
         System.out.println(Constants.LOADING_MSG);
-        String[] employees = readEmployees();
+        String[] employees = readEmployeeData();
         if (employees != null) {
-            boolean found = Arrays.stream(employees).anyMatch(emp -> emp.equals(employee));
+            boolean found = Arrays.stream(employees).anyMatch(emp -> emp.equals(employeeName));
             System.out.println(found ? "Employee found!" : "Employee not found.");
         } else {
             System.out.println("No employee data found.");
@@ -84,32 +90,34 @@ public class EmployeeManager {
         System.out.println(Constants.DATA_LOADED_MSG);
     }
 
+    //Counts the number of employees and total characters in the file. 
     private static void countEmployees() throws IOException {
         System.out.println(Constants.LOADING_MSG);
-        String[] employees = readEmployees();
+        String[] employees = readEmployeeData();
         if (employees != null) {
-            int wordCount = employees.length;
-            int charCount = Arrays.stream(employees).mapToInt(String::length).sum();
-            System.out.println(wordCount + " employee(s), " + charCount + " character(s)");
+            int employeeCount = employees.length;
+            int totalCharacters = Arrays.stream(employees).mapToInt(String::length).sum();
+            System.out.println(employeeCount + " employee(s), " + totalCharacters + " character(s)");
         } else {
             System.out.println("No employee data found.");
         }
         System.out.println(Constants.DATA_LOADED_MSG);
     }
 
-    private static void updateEmployee(String target) throws IOException {
+    // Updates an employee name to "Updated" if it exists. 
+    private static void updateEmployee(String employeeName) throws IOException {
         System.out.println(Constants.LOADING_MSG);
-        String[] employees = readEmployees();
+        String[] employees = readEmployeeData();
         if (employees != null) {
             boolean updated = false;
             for (int i = 0; i < employees.length; i++) {
-                if (employees[i].equals(target)) {
+                if (employees[i].equals(employeeName)) {
                     employees[i] = "Updated";
                     updated = true;
                 }
             }
             if (updated) {
-                writeFile(String.join(",", employees));
+                writeToFile(String.join(",", employees));
                 System.out.println("Data Updated.");
             } else {
                 System.out.println("Employee not found.");
@@ -119,14 +127,15 @@ public class EmployeeManager {
         }
     }
 
-    private static void deleteEmployee(String target) throws IOException {
+    // Deletes an employee if it exists in the file. 
+    private static void deleteEmployee(String employeeName) throws IOException {
         System.out.println(Constants.LOADING_MSG);
-        String[] employees = readEmployees();
+        String[] employees = readEmployeeData();
         if (employees != null) {
-            List<String> list = new ArrayList<>(Arrays.asList(employees));
-            boolean removed = list.remove(target);
+            List<String> employeeList = new ArrayList<>(Arrays.asList(employees));
+            boolean removed = employeeList.remove(employeeName);
             if (removed) {
-                writeFile(String.join(",", list));
+                writeToFile(String.join(",", employeeList));
                 System.out.println("Data Deleted.");
             } else {
                 System.out.println("Employee not found.");
@@ -136,23 +145,29 @@ public class EmployeeManager {
         }
     }
 
-    private static String[] readEmployees() throws IOException {
+    /*Reads employee data from the file.
+     * @return Array of employee names, or null if file is missing/empty.
+     * @throws IOException if file read fails.
+     */
+    private static String[] readEmployeeData() throws IOException {
         File file = new File(Constants.EMPLOYEE_FILE);
         if (!file.exists()) return null;
 
-        try (BufferedReader read = new BufferedReader(new FileReader(file))) {
-            String line = read.readLine();
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line = reader.readLine();
             return (line != null && !line.isEmpty()) ? line.split(",") : null;
         }
     }
 
-    private static void writeFile(String content) throws IOException {
+    //Writes content to the employee file, overwriting existing data. 
+    private static void writeToFile(String content) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE))) {
             writer.write(content);
         }
     }
 
-    private static void appendFile(String content) throws IOException {
+    // Appends content to the employee file.
+    private static void appendToFile(String content) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE, true))) {
             writer.write(content);
         }
