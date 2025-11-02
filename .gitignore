@@ -1,3 +1,4 @@
 *.log
 *.txt
 !important.log
+!employee.txt
