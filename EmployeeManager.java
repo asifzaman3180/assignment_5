@@ -63,7 +63,24 @@ public class EmployeeManager {
             return;
         }
 
-        String input = args[0];
+        String input = args[0].trim();
+
+        // Early check: input cannot be empty
+        if (input.isEmpty()) {
+            System.out.println(MSG_INVALID_ARG);
+            System.out.println(MSG_USAGE);
+            return;
+        }
+
+        // Early check: commands requiring a name must have at least 2 characters
+        if ((input.startsWith(CMD_ADD) || input.startsWith(CMD_SEARCH) ||
+                input.startsWith(CMD_UPDATE) || input.startsWith(CMD_DELETE)) &&
+                input.length() < 2) {
+            System.out.println("Command requires a name argument!");
+            System.out.println(MSG_USAGE);
+            return;
+        }
+
         System.out.println(MSG_LOADING);
 
         try {
@@ -101,7 +118,7 @@ public class EmployeeManager {
                 case CMD_COUNT -> {
                     String[] employees = readEmployees();
                     int wordCount = employees.length;
-                    int charCount = String.join("", employees).length(); // excludes commas/spaces
+                    int charCount = String.join("", employees).length();
                     System.out.println(wordCount + " word(s) found, " + charCount + " character(s) total.");
                     System.out.println(MSG_DATA_LOADED);
                 }
