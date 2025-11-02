@@ -2,22 +2,16 @@ import java.io.*;
 import java.util.*;
 
 /*
- * EmployeeManager (Task 4)
- * Duplicate file operations refactored into helper methods:
- *  - readEmployees()   -> List<String>
- *  - writeEmployees()  -> void
- *  - appendEmployee()  -> void
- *
- * This version keeps behavior same as original but centralizes file I/O.
+ * EmployeeManager (uses Constants for file name and messages)
  */
 
 public class EmployeeManager {
 
     public static void main(String[] args) {
-        // Basic argument validation (from Task 2)
+        // Argument validation
         if (args == null || args.length != 1) {
             System.out.println("Invalid number of arguments!");
-            System.out.println("Usage: java EmployeeManager <command>");
+            System.out.println(Constants.USAGE_MESSAGE);
             return;
         }
 
@@ -53,24 +47,22 @@ public class EmployeeManager {
             System.out.println("Loading data ...");
             String nameToUpdate = command.substring(1);
             updateEmployee(nameToUpdate.trim());
-            // updateEmployee prints update status
         } else if (command.startsWith("d")) {
             System.out.println("Loading data ...");
             String nameToDelete = command.substring(1);
             deleteEmployee(nameToDelete.trim());
-            // deleteEmployee prints delete status
         } else {
             System.out.println("Invalid command: " + command);
-            System.out.println("Commands: l, s, +Name, ?Name, c, uName, dName");
+            System.out.println(Constants.USAGE_MESSAGE);
         }
     }
 
-    // ---------------- Helper file I/O methods ----------------
+    // ---------------- Helper file I/O methods (use Constants.EMPLOYEE_FILE) ----------------
 
     // Read employees from file and return a list of trimmed names.
     private static List<String> readEmployees() {
         List<String> employees = new ArrayList<>();
-        File file = new File("employees.txt");
+        File file = new File(Constants.EMPLOYEE_FILE);
         if (!file.exists()) {
             // No file -> return empty list
             return employees;
@@ -91,7 +83,7 @@ public class EmployeeManager {
 
     // Overwrite employees file with the provided list.
     private static void writeEmployees(List<String> employees) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("employees.txt"))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE))) {
             writer.write(String.join(",", employees));
         } catch (IOException ioe) {
             System.out.println("Error writing employees file: " + ioe.getMessage());
@@ -100,7 +92,7 @@ public class EmployeeManager {
 
     // Append a single employee to the file (adds comma if file non-empty).
     private static void appendEmployee(String name) {
-        File file = new File("employees.txt");
+        File file = new File(Constants.EMPLOYEE_FILE);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
             if (file.exists() && file.length() > 0) {
                 writer.write("," + name);
