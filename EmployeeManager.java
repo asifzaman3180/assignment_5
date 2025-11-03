@@ -5,12 +5,11 @@ import java.util.*;
 public class EmployeeManager {
 
     private static final Set<String> VALID_COMMANDS = Set.of("l", "s", "c");
-    private static final String EMPLOYEE_FILE = "employees.txt";
 
     public static void main(String[] args) {
         if (args.length == 0) {
             System.out.println("Error: No arguments provided!");
-            System.out.println("Usage: l | s | +name | ?name | c | uName | dName");
+            System.out.println(Constants.USAGE_MESSAGE);
             return;
         }
 
@@ -18,7 +17,7 @@ public class EmployeeManager {
 
         if (!isValidCommand(command)) {
             System.out.println("Error: Invalid argument provided: " + command);
-            System.out.println("Usage: l | s | +name | ?name | c | uName | dName");
+            System.out.println(Constants.USAGE_MESSAGE);
             return;
         }
 
@@ -58,7 +57,7 @@ public class EmployeeManager {
                 System.out.println(found ? "Employee found!" : "Employee not found!");
                 System.out.println("Data Loaded.");
             } 
-            // other commands (c, u, d) will use similar refactored methods
+            // other commands (c, u, d) will be added in later tasks
         } catch (IOException e) {
             System.out.println("Error accessing employee file: " + e.getMessage());
         }
@@ -66,7 +65,7 @@ public class EmployeeManager {
 
     // Reusable method to read employees from file
     private static String[] readEmployees() throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(EMPLOYEE_FILE));
+        BufferedReader reader = new BufferedReader(new FileReader(Constants.EMPLOYEE_FILE));
         String line = reader.readLine();
         reader.close();
         return line.split(",");
@@ -74,14 +73,14 @@ public class EmployeeManager {
 
     // Reusable method to write employees to file
     private static void writeEmployees(String[] employees) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(EMPLOYEE_FILE));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE));
         writer.write(String.join(",", employees));
         writer.close();
     }
 
     // Reusable method to append a new employee
     private static void appendEmployee(String employeeName) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(EMPLOYEE_FILE, true));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE, true));
         writer.write(", " + employeeName);
         writer.close();
     }
