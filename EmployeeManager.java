@@ -130,19 +130,24 @@ public class EmployeeManager {
                 //String line = read.readLine();
                  String line = readFromFile("employees.txt");
                 char[] chars = line.toCharArray();
-                boolean inWord = false;
-                int count = 0;
-                for (char c : chars) {
-                    if (c == ' ') {
-                        if (!inWord) {
-                            count++;
-                            inWord = true;
-                        } else {
-                            inWord = false;
-                        }
-                    }
-                }
-                System.out.println(count + " word(s) found " + chars.length);
+                //boolean inWord = false;
+                //int count = 0;
+                //for (char c : chars) {
+                    //if (c == ' ') {
+                        //if (!inWord) {
+                            //count++;
+                          //  inWord = true;
+                        //} else {
+                      //      inWord = false;
+                    //    }
+                  //  }
+                //}
+
+               String data = readFromFile(Constants.File_Path);
+	       String[] employees = data.split(",");
+	       System.out.println(employees.length +"is this much employees");
+
+                //System.out.println(count + " word(s) found " + chars.length);
             }
 
 	    catch (Exception e) {}
