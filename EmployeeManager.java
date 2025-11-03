@@ -1,11 +1,11 @@
 //File Name EmployeeManager.java
 import java.io.*;
 import java.util.*;
-
+// mainn class
 public class EmployeeManager {
 
-  
-   
+  // file reader to read from specific file
+     
     public static String readFromFile(String filepath){
         try(BufferedReader read = new BufferedReader( new FileReader(filepath))){
 	    return read.readLine();
@@ -16,7 +16,7 @@ public class EmployeeManager {
 	    return ""; 
 	}	
     }
-
+   // file writer to write at specific file
     public static void writeToFile(String filepath,String data ,boolean append){
         try(BufferedWriter write = new BufferedWriter( new FileWriter(filepath,append))){
 		write.write(data);
@@ -26,9 +26,10 @@ public class EmployeeManager {
 	    System.exit(0);
 	 
 	}	
-    }
+    }  
+    // main funcion 
       public static void main(String[] args) {
-       
+       // checks if comand line argument is present or not?
         if(args.length<1){
 		
            System.out.println(" we need comand line argument l,s,+,u,  ");
@@ -44,7 +45,8 @@ public class EmployeeManager {
                            //     new FileInputStream("employees.txt")));
 			   
 
-                //String line = read.readLine();
+                //String line = read.readLine(); 
+		// no buffer reader is needed we have user defined function to read file
 		String[] employees =  readFromFile(Constants.File_Path).split(",");
 		
                 for (String emp : employees) {
@@ -52,10 +54,10 @@ public class EmployeeManager {
                 }
             }
 
-	    catch (Exception e) {}
+	    catch (Exception e) { Sustem.out.pintln("Error!"); }
             System.out.println("Data Loaded.");
         } 
-
+        // shows random employee name
 
 	else if (args[0].equals("s")) {
             System.out.println("Loading data ...");
@@ -63,7 +65,7 @@ public class EmployeeManager {
                 //BufferedReader read = new BufferedReader(
                   //      new InputStreamReader(
                     //            new FileInputStream("employees.txt")));
-
+               // using file reader function
 		String line =  readFromFile(Constants.File_Path);
                 //String line = read.readLine();
                 System.out.println(line);
@@ -77,7 +79,7 @@ public class EmployeeManager {
             System.out.println("Data Loaded.");
         } 
 
-
+            // adding new employee to the list
 	else if (args[0].contains("+")) {
             System.out.println("Loading data ...");
             try {
@@ -85,6 +87,10 @@ public class EmployeeManager {
                   //      new FileWriter("employees.txt", true));
                 String next = args[0].substring(1);
                 //write.write(", " + next);
+		//
+		//using user defined wreading function
+		//
+		//
 		writeToFile(Constants.File_Path,", "+next,true);
                // write.close();
             } 
@@ -92,7 +98,7 @@ public class EmployeeManager {
 	    catch (Exception e) {}
             System.out.println("Data Loaded.");
         } 
-
+          // searching for specific employee
 	else if (args[0].contains("?")) {
             System.out.println("Loading data ...");
             try {
@@ -105,6 +111,10 @@ public class EmployeeManager {
 		
                 //String employees[] = line.split(",");
                 //boolean found = false;
+		//
+		//easy to use and does not conyains redundent variable
+		//
+		//
                 String str = args[0].substring(1);
 		boolean found = Arrays.asList(line).contains(str);
 		System.out.println(found?"found":"not found");
@@ -142,7 +152,11 @@ public class EmployeeManager {
                     //    }
                   //  }
                 //}
-
+               //
+	       //
+	       //simple code to find specific employee
+	       //
+	       //
                String data = readFromFile(Constants.File_Path);
 	       String[] employees = data.split(",");
 	       System.out.println(employees.length +"is this much employees");
@@ -153,6 +167,7 @@ public class EmployeeManager {
 	    catch (Exception e) {}
             System.out.println("Data Loaded.");
         }
+	// updating employee data uses basic file reading
 
 	else if (args[0].contains("u")) {
             System.out.println("Loading data ...");
@@ -177,7 +192,7 @@ public class EmployeeManager {
 	    catch (Exception e) {}
             System.out.println("Data Updated.");
         } 
-
+      // deleting employee data 
 	else if (args[0].contains("d")) {
             System.out.println("Loading data ...");
             try {
