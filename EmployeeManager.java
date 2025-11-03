@@ -1,10 +1,9 @@
-// EmployeeManager.java – Task #6
+// EmployeeManager.java – Task #7
 import java.io.*;
 import java.util.*;
 
 public class EmployeeManager {
 
-    // Reads the employees from the file and returns a String array
     private static String[] readEmployees() throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(Constants.EMPLOYEE_FILE));
         String line = reader.readLine();
@@ -12,7 +11,6 @@ public class EmployeeManager {
         return line.split(",");
     }
 
-    // Writes the employees array to the file
     private static void writeEmployees(String[] employees) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE));
         writer.write(String.join(",", employees));
@@ -26,57 +24,56 @@ public class EmployeeManager {
         }
 
         try {
-            if (args[0].equals("l")) {
+            String arg = args[0];
+
+            if (arg.equals("l")) {
                 System.out.println("Loading data ...");
                 for (String employee : readEmployees()) {
                     System.out.println(employee);
                 }
                 System.out.println("Data Loaded.");
-            } else if (args[0].equals("s")) {
+            } else if (arg.equals("s")) {
                 System.out.println("Loading data ...");
                 String[] employees = readEmployees();
                 System.out.println(employees[new Random().nextInt(employees.length)]);
                 System.out.println("Data Loaded.");
-            } else if (args[0].contains("+")) {
+            } else if (arg.startsWith("+")) {
                 System.out.println("Loading data ...");
-                String employeeName = args[0].substring(1);
+                String employeeName = arg.substring(1);
                 List<String> employeeList = new ArrayList<>(Arrays.asList(readEmployees()));
                 employeeList.add(employeeName);
                 writeEmployees(employeeList.toArray(new String[0]));
                 System.out.println("Data Loaded.");
-            } else if (args[0].contains("?")) {
+            } else if (arg.startsWith("?")) {
                 System.out.println("Loading data ...");
-                String searchName = args[0].substring(1);
-                for (String employee : readEmployees()) {
-                    if (employee.equals(searchName)) {
-                        System.out.println("Employee found!");
-                        break;
-                    }
-                }
+                String searchName = arg.substring(1);
+                boolean found = Arrays.asList(readEmployees()).contains(searchName);
+                System.out.println(found ? "Employee found!" : "Employee not found.");
                 System.out.println("Data Loaded.");
-            } else if (args[0].contains("c")) {
+            } else if (arg.startsWith("c")) {
                 System.out.println("Loading data ...");
                 System.out.println(readEmployees().length + " employee(s) found.");
                 System.out.println("Data Loaded.");
-            } else if (args[0].contains("u")) {
+            } else if (arg.startsWith("u")) {
                 System.out.println("Loading data ...");
-                String employeeName = args[0].substring(1);
+                String employeeName = arg.substring(1);
                 String[] employees = readEmployees();
                 for (int i = 0; i < employees.length; i++) {
                     if (employees[i].equals(employeeName)) employees[i] = "Updated";
                 }
                 writeEmployees(employees);
                 System.out.println("Data Updated.");
-            } else if (args[0].contains("d")) {
+            } else if (arg.startsWith("d")) {
                 System.out.println("Loading data ...");
-                String employeeName = args[0].substring(1);
+                String employeeName = arg.substring(1);
                 List<String> employeeList = new ArrayList<>(Arrays.asList(readEmployees()));
                 employeeList.remove(employeeName);
                 writeEmployees(employeeList.toArray(new String[0]));
                 System.out.println("Data Deleted.");
             } else {
-                System.out.println("Error: Unsupported argument '" + args[0] + "'");
+                System.out.println("Error: Unsupported argument '" + arg + "'");
             }
+
         } catch (IOException ex) {
             ex.printStackTrace();
         }
