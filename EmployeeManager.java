@@ -78,7 +78,7 @@ public class EmployeeManager {
                         } else {
                             inWord = false;
                         }
-                    }
+                    }///this for code complie correction
                 }
                 System.out.println(count + " word(s) found " + chars.length);
             } catch (Exception e) {}
