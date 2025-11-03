@@ -1,4 +1,4 @@
-// EmployeeManager.java – Task #5
+// EmployeeManager.java – Task #6
 import java.io.*;
 import java.util.*;
 
@@ -20,7 +20,6 @@ public class EmployeeManager {
     }
 
     public static void main(String[] args) {
-        // Check for missing arguments
         if (args.length == 0) {
             System.out.println("Error: No arguments provided. Please provide an operation argument.");
             return;
@@ -29,63 +28,49 @@ public class EmployeeManager {
         try {
             if (args[0].equals("l")) {
                 System.out.println("Loading data ...");
-                String[] employees = readEmployees();
-                for (String employee : employees) {
+                for (String employee : readEmployees()) {
                     System.out.println(employee);
                 }
                 System.out.println("Data Loaded.");
             } else if (args[0].equals("s")) {
                 System.out.println("Loading data ...");
                 String[] employees = readEmployees();
-                Random rand = new Random();
-                int randomIndex = rand.nextInt(employees.length);
-                System.out.println(employees[randomIndex]);
+                System.out.println(employees[new Random().nextInt(employees.length)]);
                 System.out.println("Data Loaded.");
             } else if (args[0].contains("+")) {
                 System.out.println("Loading data ...");
                 String employeeName = args[0].substring(1);
-                String[] employees = readEmployees();
-                List<String> employeeList = new ArrayList<>(Arrays.asList(employees));
+                List<String> employeeList = new ArrayList<>(Arrays.asList(readEmployees()));
                 employeeList.add(employeeName);
                 writeEmployees(employeeList.toArray(new String[0]));
                 System.out.println("Data Loaded.");
             } else if (args[0].contains("?")) {
                 System.out.println("Loading data ...");
                 String searchName = args[0].substring(1);
-                String[] employees = readEmployees();
-                boolean found = false;
-                for (String employee : employees) {
+                for (String employee : readEmployees()) {
                     if (employee.equals(searchName)) {
                         System.out.println("Employee found!");
-                        found = true;
                         break;
                     }
-                }
-                if (!found) {
-                    System.out.println("Employee not found.");
                 }
                 System.out.println("Data Loaded.");
             } else if (args[0].contains("c")) {
                 System.out.println("Loading data ...");
-                String[] employees = readEmployees();
-                System.out.println(employees.length + " employee(s) found.");
+                System.out.println(readEmployees().length + " employee(s) found.");
                 System.out.println("Data Loaded.");
             } else if (args[0].contains("u")) {
                 System.out.println("Loading data ...");
                 String employeeName = args[0].substring(1);
                 String[] employees = readEmployees();
                 for (int i = 0; i < employees.length; i++) {
-                    if (employees[i].equals(employeeName)) {
-                        employees[i] = "Updated";
-                    }
+                    if (employees[i].equals(employeeName)) employees[i] = "Updated";
                 }
                 writeEmployees(employees);
                 System.out.println("Data Updated.");
             } else if (args[0].contains("d")) {
                 System.out.println("Loading data ...");
                 String employeeName = args[0].substring(1);
-                String[] employees = readEmployees();
-                List<String> employeeList = new ArrayList<>(Arrays.asList(employees));
+                List<String> employeeList = new ArrayList<>(Arrays.asList(readEmployees()));
                 employeeList.remove(employeeName);
                 writeEmployees(employeeList.toArray(new String[0]));
                 System.out.println("Data Deleted.");
