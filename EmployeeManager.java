@@ -1,9 +1,15 @@
-// EmployeeManager.java – Task #1
+// EmployeeManager.java – Task #2
 import java.io.*;
 import java.util.*;
 
 public class EmployeeManager {
     public static void main(String[] args) {
+        // Task #2: Check for missing arguments
+        if (args.length == 0) {
+            System.out.println("Error: No arguments provided. Please provide an operation argument.");
+            return;
+        }
+
         if (args[0].equals("l")) {
             System.out.println("Loading data ...");
             try {
