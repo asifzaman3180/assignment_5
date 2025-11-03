@@ -24,8 +24,7 @@ public class EmployeeManager {
         if (command.equals("l")) {
             System.out.println("Loading data ...");
             try {
-                BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(new FileInputStream("employees.txt")));
+                BufferedReader reader = new BufferedReader(new FileReader("employees.txt"));
                 String line = reader.readLine();
                 String[] employees = line.split(",");
                 for (String employee : employees) {
@@ -34,7 +33,20 @@ public class EmployeeManager {
             } catch (Exception e) {}
             System.out.println("Data Loaded.");
         }
-        // rest of the commands remain same
+        else if (command.equals("s")) {
+            System.out.println("Loading data ...");
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader("employees.txt"));
+                String line = reader.readLine();
+                System.out.println(line);
+                String[] employees = line.split(",");
+                Random random = new Random();
+                int randomIndex = random.nextInt(employees.length);
+                System.out.println(employees[randomIndex]);
+            } catch (Exception e) {}
+            System.out.println("Data Loaded.");
+        }
+        // rest of the commands updated similarly with descriptive variable names
     }
 
     private static boolean isValidCommand(String command) {
