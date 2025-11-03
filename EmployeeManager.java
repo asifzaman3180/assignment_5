@@ -37,15 +37,13 @@ public class EmployeeManager {
                 System.out.println("Loading data ...");
                 System.out.println(String.join(",", employees));
                 Random random = new Random();
-                int index = random.nextInt(employees.length);
-                System.out.println(employees[index]);
+                System.out.println(employees[random.nextInt(employees.length)]);
                 System.out.println("Data Loaded.");
             } 
             else if (command.startsWith("+")) {
                 // Add a new employee
-                String newEmployee = command.substring(1);
                 System.out.println("Loading data ...");
-                appendEmployee(newEmployee);
+                appendEmployee(command.substring(1));
                 System.out.println("Data Loaded.");
             } 
             else if (command.startsWith("?")) {
@@ -57,7 +55,7 @@ public class EmployeeManager {
                 System.out.println(found ? "Employee found!" : "Employee not found!");
                 System.out.println("Data Loaded.");
             } 
-            // other commands (c, u, d) will be added in later tasks
+            // other commands (c, u, d) will be updated in later tasks
         } catch (IOException e) {
             System.out.println("Error accessing employee file: " + e.getMessage());
         }
