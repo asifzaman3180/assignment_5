@@ -45,8 +45,8 @@ public class EmployeeManager {
 			   
 
                 //String line = read.readLine();
-		String line =  readFromFile(Constants.File_Path);
-		String employees[] = line.split(",");
+		String[] employees =  readFromFile(Constants.File_Path).split(",");
+		
                 for (String emp : employees) {
                     System.out.println(emp);
                 }
