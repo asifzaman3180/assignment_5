@@ -1,4 +1,4 @@
-// EmployeeManager.java – Task #7
+// EmployeeManager.java – Task #8
 import java.io.*;
 import java.util.*;
 
@@ -52,7 +52,8 @@ public class EmployeeManager {
                 System.out.println("Data Loaded.");
             } else if (arg.startsWith("c")) {
                 System.out.println("Loading data ...");
-                System.out.println(readEmployees().length + " employee(s) found.");
+                // Simplified count operation
+                System.out.println("Total employees: " + readEmployees().length);
                 System.out.println("Data Loaded.");
             } else if (arg.startsWith("u")) {
                 System.out.println("Loading data ...");
