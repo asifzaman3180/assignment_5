@@ -24,7 +24,6 @@ public class EmployeeManager {
 
         try {
             if (command.equals("l")) {
-                // List all employees
                 System.out.println("Loading data ...");
                 String[] employees = readEmployees();
                 for (String employee : employees) {
@@ -33,7 +32,6 @@ public class EmployeeManager {
                 System.out.println("Data Loaded.");
             } 
             else if (command.equals("s")) {
-                // Show a random employee
                 System.out.println("Loading data ...");
                 String[] employees = readEmployees();
                 System.out.println(String.join(",", employees));
@@ -42,13 +40,11 @@ public class EmployeeManager {
                 System.out.println("Data Loaded.");
             } 
             else if (command.startsWith("+")) {
-                // Add a new employee
                 System.out.println("Loading data ...");
                 appendEmployee(command.substring(1));
                 System.out.println("Data Loaded.");
             } 
             else if (command.startsWith("?")) {
-                // Search for an employee
                 System.out.println("Loading data ...");
                 String searchName = command.substring(1);
                 boolean found = Arrays.stream(readEmployees()).anyMatch(emp -> emp.equals(searchName));
@@ -56,15 +52,13 @@ public class EmployeeManager {
                 System.out.println("Data Loaded.");
             } 
             else if (command.equals("c")) {
-                // Count words and characters
                 System.out.println("Loading data ...");
-                String line = String.join(",", readEmployees());
-                int wordCount = line.trim().isEmpty() ? 0 : line.split("\\s+").length;
-                System.out.println(wordCount + " word(s) found, total characters: " + line.length());
+                String line = String.join(",", readEmployees()).trim();
+                int wordCount = line.isEmpty() ? 0 : line.split("\\s+").length;
+                System.out.println(wordCount + " word(s), " + line.length() + " character(s)");
                 System.out.println("Data Loaded.");
             }
             else if (command.startsWith("u")) {
-                // Update employee
                 System.out.println("Loading data ...");
                 String employeeToUpdate = command.substring(1);
                 String[] employees = readEmployees();
@@ -75,7 +69,6 @@ public class EmployeeManager {
                 System.out.println("Data Updated.");
             }
             else if (command.startsWith("d")) {
-                // Delete employee
                 System.out.println("Loading data ...");
                 String employeeToDelete = command.substring(1);
                 List<String> employeesList = new ArrayList<>(Arrays.asList(readEmployees()));
