@@ -3,6 +3,15 @@ import java.io.*;
 import java.util.*;
 
 public class EmployeeManager {
+    int s = 0;
+for (int i = 0; i < list.size(); i++) {
+    s += list.get(i);
+}
+int totalSalary = 0;
+for (int employeeIndex = 0; employeeIndex < employeeList.size(); employeeIndex++) {
+    totalSalary += employeeList.get(employeeIndex);
+}
+
     public static void main(String[] args) {
         // Check arguments
         if (args[0].equals("l")) {
