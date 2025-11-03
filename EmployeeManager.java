@@ -16,7 +16,9 @@ public class EmployeeManager {
                 for (String emp : e) {
                     System.out.println(emp);
                 }
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                println{"Hello"};
+            }
             System.out.println("Data Loaded.");
         } else if (args[0].equals("s")) {
             System.out.println("Loading data ...");
