@@ -101,17 +101,20 @@ public class EmployeeManager {
                      //           new FileInputStream("employees.txt")));
                 //String line = read.readLine();
 
-		String line =  readFromFile("employees.txt");
+		String line =  readFromFile(Constants.File_Path);
 		
-                String employees[] = line.split(",");
-                boolean found = false;
+                //String employees[] = line.split(",");
+                //boolean found = false;
                 String str = args[0].substring(1);
-                for (int i = 0; i < employees.length && !found; i++) {
-                    if (employees[i].equals(str)) {
-                        System.out.println("Employee found!");
-                        found = true;
-                    }
-                }
+		boolean found = Arrays.asList(line).contains(str);
+		System.out.println(found?"found":"not found");
+
+                //for (int i = 0; i < employees.length && !found; i++) {
+                  //  if (employees[i].equals(str)) {
+                    //    System.out.println("Employee found!");
+                      //  found = true;
+                    //}
+               // }
             }
 
 	    catch (Exception e) {}
