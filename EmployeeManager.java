@@ -31,7 +31,7 @@ public class EmployeeManager {
        
         if(args.length<1){
 		
-           System.out.println(" we need comand line argument ");
+           System.out.println(" we need comand line argument l,s,+,u,  ");
 	   System.exit(0);
 	}
          
