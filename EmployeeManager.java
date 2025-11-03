@@ -1,10 +1,25 @@
-//File Name EmployeeManager.java
+// File Name EmployeeManager.java
 import java.io.*;
 import java.util.*;
 
 public class EmployeeManager {
     public static void main(String[] args) {
-        // Check arguments
+
+        if (args.length != 1) {
+            System.err.println("Error: Exactly one command-line argument is required.");
+            System.err.println();
+            System.err.println("Usage:");
+            System.err.println("  l                    – list all employees");
+            System.err.println("  s                    – show random employee");
+            System.err.println("  +<name>              – add employee");
+            System.err.println("  ?<name>              – search employee");
+            System.err.println("  c                    – count words / characters");
+            System.err.println("  u<name>              – update employee to \"Updated\"");
+            System.err.println("  d<name>              – delete employee");
+            return;                     // <-- early termination
+        }
+
+        
         if (args[0].equals("l")) {
             System.out.println("Loading data ...");
             try {
@@ -18,6 +33,8 @@ public class EmployeeManager {
                 }
             } catch (Exception e) {}
             System.out.println("Data Loaded.");
+
+        // … (the rest of your original else-if chain stays exactly the same) …
         } else if (args[0].equals("s")) {
             System.out.println("Loading data ...");
             try {
