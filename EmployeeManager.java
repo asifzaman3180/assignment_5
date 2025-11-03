@@ -1,4 +1,4 @@
-// EmployeeManager.java – Task #4
+// EmployeeManager.java – Task #5
 import java.io.*;
 import java.util.*;
 
@@ -6,7 +6,7 @@ public class EmployeeManager {
 
     // Reads the employees from the file and returns a String array
     private static String[] readEmployees() throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader("employees.txt"));
+        BufferedReader reader = new BufferedReader(new FileReader(Constants.EMPLOYEE_FILE));
         String line = reader.readLine();
         reader.close();
         return line.split(",");
@@ -14,7 +14,7 @@ public class EmployeeManager {
 
     // Writes the employees array to the file
     private static void writeEmployees(String[] employees) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter("employees.txt"));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(Constants.EMPLOYEE_FILE));
         writer.write(String.join(",", employees));
         writer.close();
     }
