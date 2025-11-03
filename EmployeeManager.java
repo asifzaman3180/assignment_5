@@ -122,4 +122,15 @@ public class EmployeeManager {
             System.out.println("Data Deleted.");
         }
     }
+    if (args.length == 0) {
+    System.out.println("Error: No arguments provided!");
+    System.out.println("Usage: java EmployeeManager <command>");
+    return;
+}
+
+if (args.length > 1) {
+    System.out.println("Error: Too many arguments!");
+    return;
+}
+
 }
