@@ -1,4 +1,4 @@
-// EmployeeManager.java – Task #8
+// EmployeeManager.java – Task #9
 import java.io.*;
 import java.util.*;
 
@@ -19,7 +19,7 @@ public class EmployeeManager {
 
     public static void main(String[] args) {
         if (args.length == 0) {
-            System.out.println("Error: No arguments provided. Please provide an operation argument.");
+            System.out.println("Error: No arguments provided. Supported arguments: l, s, +<name>, ?<name>, c, u<name>, d<name>");
             return;
         }
 
@@ -40,39 +40,61 @@ public class EmployeeManager {
             } else if (arg.startsWith("+")) {
                 System.out.println("Loading data ...");
                 String employeeName = arg.substring(1);
-                List<String> employeeList = new ArrayList<>(Arrays.asList(readEmployees()));
-                employeeList.add(employeeName);
-                writeEmployees(employeeList.toArray(new String[0]));
-                System.out.println("Data Loaded.");
+                if (employeeName.isEmpty()) {
+                    System.out.println("Error: Please provide a name to add.");
+                } else {
+                    List<String> employeeList = new ArrayList<>(Arrays.asList(readEmployees()));
+                    employeeList.add(employeeName);
+                    writeEmployees(employeeList.toArray(new String[0]));
+                    System.out.println("Data Loaded.");
+                }
             } else if (arg.startsWith("?")) {
                 System.out.println("Loading data ...");
                 String searchName = arg.substring(1);
-                boolean found = Arrays.asList(readEmployees()).contains(searchName);
-                System.out.println(found ? "Employee found!" : "Employee not found.");
+                if (searchName.isEmpty()) {
+                    System.out.println("Error: Please provide a name to search.");
+                } else {
+                    boolean found = Arrays.asList(readEmployees()).contains(searchName);
+                    System.out.println(found ? "Employee found!" : "Employee not found.");
+                }
                 System.out.println("Data Loaded.");
             } else if (arg.startsWith("c")) {
                 System.out.println("Loading data ...");
-                // Simplified count operation
                 System.out.println("Total employees: " + readEmployees().length);
                 System.out.println("Data Loaded.");
             } else if (arg.startsWith("u")) {
                 System.out.println("Loading data ...");
                 String employeeName = arg.substring(1);
-                String[] employees = readEmployees();
-                for (int i = 0; i < employees.length; i++) {
-                    if (employees[i].equals(employeeName)) employees[i] = "Updated";
+                if (employeeName.isEmpty()) {
+                    System.out.println("Error: Please provide a name to update.");
+                } else {
+                    String[] employees = readEmployees();
+                    boolean updated = false;
+                    for (int i = 0; i < employees.length; i++) {
+                        if (employees[i].equals(employeeName)) {
+                            employees[i] = "Updated";
+                            updated = true;
+                        }
+                    }
+                    writeEmployees(employees);
+                    System.out.println(updated ? "Data Updated." : "Employee not found.");
                 }
-                writeEmployees(employees);
-                System.out.println("Data Updated.");
             } else if (arg.startsWith("d")) {
                 System.out.println("Loading data ...");
                 String employeeName = arg.substring(1);
-                List<String> employeeList = new ArrayList<>(Arrays.asList(readEmployees()));
-                employeeList.remove(employeeName);
-                writeEmployees(employeeList.toArray(new String[0]));
-                System.out.println("Data Deleted.");
+                if (employeeName.isEmpty()) {
+                    System.out.println("Error: Please provide a name to delete.");
+                } else {
+                    List<String> employeeList = new ArrayList<>(Arrays.asList(readEmployees()));
+                    if (employeeList.remove(employeeName)) {
+                        writeEmployees(employeeList.toArray(new String[0]));
+                        System.out.println("Data Deleted.");
+                    } else {
+                        System.out.println("Employee not found.");
+                    }
+                }
             } else {
-                System.out.println("Error: Unsupported argument '" + arg + "'");
+                System.out.println("Error: Unsupported argument '" + arg + "'. Supported arguments: l, s, +<name>, ?<name>, c, u<name>, d<name>");
             }
 
         } catch (IOException ex) {
