@@ -45,8 +45,8 @@ public class EmployeeManager {
 			   
 
                 //String line = read.readLine();
-		String line =  readFromFile("employees.txt");
-                String employees[] = line.split(",");
+		String line =  readFromFile(Constants.File_Path);
+		String employees[] = line.split(",");
                 for (String emp : employees) {
                     System.out.println(emp);
                 }
@@ -64,7 +64,7 @@ public class EmployeeManager {
                   //      new InputStreamReader(
                     //            new FileInputStream("employees.txt")));
 
-		String line =  readFromFile("employees.txt");
+		String line =  readFromFile(Constants.File_Path);
                 //String line = read.readLine();
                 System.out.println(line);
                 String employees[] = line.split(",");
@@ -85,7 +85,7 @@ public class EmployeeManager {
                   //      new FileWriter("employees.txt", true));
                 String next = args[0].substring(1);
                 //write.write(", " + next);
-		writeToFile("employees.txt",", "+next,true);
+		writeToFile(Constants.File_Path,", "+next,true);
                // write.close();
             } 
 
