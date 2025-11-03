@@ -17,13 +17,14 @@ public class EmployeeManager {
         String command = args[0];
 
         if (!isValidCommand(command)) {
-            System.out.println("Error: Invalid argument provided: " + command);
+            System.out.println("Error: Unsupported or invalid argument: " + command);
             System.out.println(Constants.USAGE_MESSAGE);
             return;
         }
 
         try {
             if (command.equals("l")) {
+                // List all employees
                 System.out.println("Loading data ...");
                 String[] employees = readEmployees();
                 for (String employee : employees) {
@@ -32,6 +33,7 @@ public class EmployeeManager {
                 System.out.println("Data Loaded.");
             } 
             else if (command.equals("s")) {
+                // Show a random employee
                 System.out.println("Loading data ...");
                 String[] employees = readEmployees();
                 System.out.println(String.join(",", employees));
@@ -40,11 +42,13 @@ public class EmployeeManager {
                 System.out.println("Data Loaded.");
             } 
             else if (command.startsWith("+")) {
+                // Add new employee
                 System.out.println("Loading data ...");
                 appendEmployee(command.substring(1));
                 System.out.println("Data Loaded.");
             } 
             else if (command.startsWith("?")) {
+                // Search employee
                 System.out.println("Loading data ...");
                 String searchName = command.substring(1);
                 boolean found = Arrays.stream(readEmployees()).anyMatch(emp -> emp.equals(searchName));
@@ -52,6 +56,7 @@ public class EmployeeManager {
                 System.out.println("Data Loaded.");
             } 
             else if (command.equals("c")) {
+                // Count words and characters
                 System.out.println("Loading data ...");
                 String line = String.join(",", readEmployees()).trim();
                 int wordCount = line.isEmpty() ? 0 : line.split("\\s+").length;
@@ -59,16 +64,22 @@ public class EmployeeManager {
                 System.out.println("Data Loaded.");
             }
             else if (command.startsWith("u")) {
+                // Update employee
                 System.out.println("Loading data ...");
                 String employeeToUpdate = command.substring(1);
                 String[] employees = readEmployees();
-                employees = Arrays.stream(employees)
-                        .map(emp -> emp.equals(employeeToUpdate) ? "Updated" : emp)
-                        .toArray(String[]::new);
-                writeEmployees(employees);
-                System.out.println("Data Updated.");
+                if (!Arrays.asList(employees).contains(employeeToUpdate)) {
+                    System.out.println("Employee not found. No update performed.");
+                } else {
+                    employees = Arrays.stream(employees)
+                            .map(emp -> emp.equals(employeeToUpdate) ? "Updated" : emp)
+                            .toArray(String[]::new);
+                    writeEmployees(employees);
+                    System.out.println("Data Updated.");
+                }
             }
             else if (command.startsWith("d")) {
+                // Delete employee
                 System.out.println("Loading data ...");
                 String employeeToDelete = command.substring(1);
                 List<String> employeesList = new ArrayList<>(Arrays.asList(readEmployees()));
@@ -79,6 +90,11 @@ public class EmployeeManager {
                 } else {
                     System.out.println("Employee not found. No deletion performed.");
                 }
+            }
+            else {
+                // Should never reach here due to isValidCommand, but extra safety
+                System.out.println("Error: Unknown command encountered.");
+                System.out.println(Constants.USAGE_MESSAGE);
             }
         } catch (FileNotFoundException e) {
             System.out.println("Error: Employee file not found.");
